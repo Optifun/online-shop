@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold Name=OnlineShop Npgsql.EntityFrameworkCore.PostgreSQL -o ./DataAccess -c OnlineShopContext --force
