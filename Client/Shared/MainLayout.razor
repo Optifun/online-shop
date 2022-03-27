@@ -9,12 +9,22 @@
         }
         <MudSpacer/>
 
+        <MudAvatar Color="Color.Info" Variant="Variant.Text">
+            @if (Letter != ' ')
+            {
+                <span>@Letter</span>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Outlined.QuestionMark"/>
+            }
+        </MudAvatar>
         <MudTooltip Text="Корзина">
             <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Inherit"/>
         </MudTooltip>
     </MudAppBar>
 
-    <NavMenu Open=@navMenuOpen ClickedClose="DrawerToggle"></NavMenu>
+    <NavMenu Open=@navMenuOpen ClickedClose="DrawerToggle"/>
     <MudMainContent>
         <div class="content px-4">
             @Body
@@ -23,7 +33,17 @@
 </MudLayout>
 
 @code{
+
+    [Parameter]
+    public string Username { get; set; } = "";
+
     bool navMenuOpen = false;
+    private char Letter;
+
+    protected override void OnInitialized()
+    {
+        Letter = Username != "" ? Username.Substring(0, 1).ToUpper()[0] : ' ';
+    }
 
     void DrawerToggle()
     {
