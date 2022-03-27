@@ -1,0 +1,42 @@
+﻿<MudPaper>
+
+    <MudTextField @bind-Value="UserName" Label="Имя пользователя" Variant="Variant.Outlined" Margin="Margin.Dense" Error="@Result" />
+
+    <MudTextField @bind-Value="Password" 
+                  Label="Пароль" 
+                  Variant="Variant.Outlined" 
+                  Margin="Margin.Dense" Error="@Result" 
+                  InputType="@PasswordType" 
+                  Adornment="Adornment.End" AdornmentIcon="@VisIcon" OnAdornmentClick="ToggleVisibility"/>
+    @* <MudText Color="Color.Error">@loginError</MudText> *@
+    <br>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Login" FullWidth="true">Войти</MudButton>
+</MudPaper>
+
+@code {
+    private string UserName { get; set; }
+    private string Password { get; set; }
+    private bool Result { get; set; } = false;
+
+    string VisIcon { get; set; }
+    InputType PasswordType { get; set; }
+    bool passwordVisible = false;
+    
+    private void Login()
+    {
+        
+    }
+    protected override void OnInitialized() =>
+        SetVisibility(false);
+
+    void ToggleVisibility() =>
+        SetVisibility(!passwordVisible);
+
+    private void SetVisibility(bool visible)
+    {
+        passwordVisible = visible;
+        VisIcon = passwordVisible ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
+        PasswordType = passwordVisible ? InputType.Text : InputType.Password;
+    }
+
+}

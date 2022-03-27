@@ -1,0 +1,56 @@
+﻿<MudPaper>
+    <MudTextField @bind-Value="Username" Label="Имя пользователя" Variant="Variant.Outlined" Margin="Margin.Dense" Error="@Result"/>
+
+    @{
+    }
+    <MudTextField @bind-Value="Password" Label="Пароль"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense"
+                  Error="@Result"
+                  InputType="@PasswordType"
+                  Adornment="Adornment.End"
+                  AdornmentIcon="@VisIcon" OnAdornmentClick="ToggleVisibility"/>
+    <MudTextField @bind-Value="PasswordRepeat"
+                  Label="Повторите пароль"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense"
+                  Error="@Result"
+                  InputType="@PasswordType"
+                  Adornment="Adornment.End"
+                  AdornmentIcon="@VisIcon" OnAdornmentClick="ToggleVisibility"/>
+
+    <MudText Color="Color.Error">@Error</MudText>
+    <br>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Register" FullWidth="true">Зарегистрироваться</MudButton>
+</MudPaper>
+
+@code {
+    private string Username { get; set; }
+    private string Password { get; set; }
+    private string PasswordRepeat { get; set; }
+
+    private bool Result { get; set; } = false;
+    private string Error { get; set; } = "";
+
+    bool passwordVisible = false;
+    string VisIcon { get; set; }
+    InputType PasswordType { get; set; }
+
+    void Register()
+    {
+    }
+
+    protected override void OnInitialized() =>
+        SetVisibility(false);
+
+    void ToggleVisibility() =>
+        SetVisibility(!passwordVisible);
+
+    private void SetVisibility(bool visible)
+    {
+        passwordVisible = visible;
+        VisIcon = passwordVisible ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff;
+        PasswordType = passwordVisible ? InputType.Text : InputType.Password;
+    }
+
+}

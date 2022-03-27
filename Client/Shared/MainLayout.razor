@@ -1,4 +1,5 @@
 @using MudBlazor
+@using OnlineShop.Client.Components.Auth
 @inherits LayoutComponentBase
 @inject IDialogService _dialogService
 
@@ -10,6 +11,7 @@
         }
         <MudSpacer/>
 
+        <MudButton OnClick="Auth">
             <MudAvatar Color="Color.Info" Variant="Variant.Text">
                 @if (Letter != ' ')
                 {
@@ -20,6 +22,7 @@
                     <MudIcon Icon="@Icons.Outlined.QuestionMark"/>
                 }
             </MudAvatar>
+        </MudButton>
         <MudTooltip Text="Корзина">
             <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Inherit"/>
         </MudTooltip>
@@ -49,6 +52,11 @@
     void DrawerToggle()
     {
         navMenuOpen = !navMenuOpen;
+    }
+
+    private void Auth()
+    {
+        _dialogService.Show<AuthDialog>();
     }
 
 }
