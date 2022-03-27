@@ -1,5 +1,6 @@
 @using MudBlazor
 @using OnlineShop.Client.Components.Auth
+@using OnlineShop.Client.Services.State
 @inherits LayoutComponentBase
 @inject IDialogService _dialogService
 
@@ -38,15 +39,16 @@
 
 @code{
 
-    [Parameter]
-    public string Username { get; set; } = "";
+    [CascadingParameter]
+    public AppState AppState { get; set; }
 
     bool navMenuOpen = false;
     private char Letter;
 
     protected override void OnInitialized()
     {
-        Letter = Username != "" ? Username.Substring(0, 1).ToUpper()[0] : ' ';
+        string userName = AppState.UserState?.UserName ?? "";
+        Letter = userName != "" ? userName.Substring(0, 1).ToUpper()[0] : ' ';
     }
 
     void DrawerToggle()
