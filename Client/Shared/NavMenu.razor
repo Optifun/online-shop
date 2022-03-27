@@ -1,40 +1,47 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">online-shop.Client</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿@using MudBlazor
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-    </nav>
-</div>
+<MudDrawer @bind-Open="Open" Variant="@DrawerVariant.Responsive">
+
+    <MudDrawerHeader Style="height: calc(var(--mud-appbar-height) - var(--mud-appbar-height)/4);">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="onClicked"/>
+        <MudLink Href="/main" Underline="Underline.None" Color="Color.Default" Typo="Typo.h5" Class="ml-3 my-auto">
+            Shop
+        </MudLink>
+    </MudDrawerHeader>
+
+    <MudDrawerContainer>
+        <MudNavMenu>
+            <MudNavLink Href="/main" Icon="@Icons.Filled.Home">
+                Каталог товаров
+            </MudNavLink>
+            <MudNavLink Href="/profile" Icon="@Icons.Filled.Person">
+                Личный кабинет
+            </MudNavLink>
+            <MudNavLink Href="/admin" Icon="@Icons.Filled.Tab">
+                Админ-панель
+            </MudNavLink>
+
+        </MudNavMenu>
+    </MudDrawerContainer>
+</MudDrawer>
 
 @code {
-    private bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    [Parameter]
+    public bool Open { get; set; } = false;
 
-    private void ToggleNavMenu()
+    [Parameter]
+    public EventCallback ClickedClose { get; set; }
+
+    private void onClicked()
     {
-        collapseNavMenu = !collapseNavMenu;
+        ClickedClose.InvokeAsync();
+    // Toggle();
+    }
+
+    private bool Toggle()
+    {
+        return Open = !Open;
     }
 
 }

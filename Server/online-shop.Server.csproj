@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Client\online-shop.Client.csproj" />
       <ProjectReference Include="..\online-shop.Client\online-shop.Client.csproj" />
     </ItemGroup>
 

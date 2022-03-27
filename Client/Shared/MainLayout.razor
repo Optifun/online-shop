@@ -1,17 +1,30 @@
+@using MudBlazor
 @inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+<MudLayout>
+    <MudAppBar Elevation="1">
+        @* @if (!navMenuOpen) *@
+        @* { *@
+        @*     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle"/> *@
+        @*     <MudLink Href="/main" Underline="Underline.None" Color="Color.Default" Typo="Typo.h5" Class="ml-3 my-auto" Style="color: #fefefe !important;"> *@
+        @*         OnlineShop *@
+        @*     </MudLink> *@
+        @* } *@
+    </MudAppBar>
+    <NavMenu Open=@navMenuOpen ClickedClose="DrawerToggle"></NavMenu>
+    <MudMainContent>
+        <div class="content px-4">
             @Body
-        </article>
-    </main>
-</div>
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+@code{
+    bool navMenuOpen = true;
+
+    void DrawerToggle()
+    {
+        navMenuOpen = !navMenuOpen;
+    }
+
+}
