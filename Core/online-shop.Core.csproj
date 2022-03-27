@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>OnlineShop.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
