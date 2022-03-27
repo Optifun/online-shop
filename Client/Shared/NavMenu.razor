@@ -10,17 +10,18 @@
     </MudDrawerHeader>
 
     <MudDrawerContainer>
-        <MudNavMenu>
-            <MudNavLink Href="/main" Icon="@Icons.Filled.Home">
+        <MudNavMenu Bordered="true" Color="Color.Info">
+            <MudNavLink Match="NavLinkMatch.All" Href="/" Icon="@Icons.Filled.Home">
                 Каталог товаров
             </MudNavLink>
             <MudNavLink Href="/profile" Icon="@Icons.Filled.Person">
                 Личный кабинет
             </MudNavLink>
-            <MudNavLink Href="/admin" Icon="@Icons.Filled.Tab">
-                Админ-панель
-            </MudNavLink>
-
+            <MudNavGroup Title="Админ-панель" Icon="@Icons.Filled.Tab">
+                <MudNavLink Href="/admin/users" >Пользователи</MudNavLink>
+                <MudNavLink Href="/admin/products">Товары</MudNavLink>
+                <MudNavLink Href="/admin/reports">Отчеты</MudNavLink>
+            </MudNavGroup>
         </MudNavMenu>
     </MudDrawerContainer>
 </MudDrawer>
@@ -36,12 +37,5 @@
     private void onClicked()
     {
         ClickedClose.InvokeAsync();
-    // Toggle();
     }
-
-    private bool Toggle()
-    {
-        return Open = !Open;
-    }
-
 }
