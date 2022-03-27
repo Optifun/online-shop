@@ -1,5 +1,6 @@
 @using MudBlazor
 @inherits LayoutComponentBase
+@inject IDialogService _dialogService
 
 <MudLayout>
     <MudAppBar Elevation="1">
@@ -9,16 +10,16 @@
         }
         <MudSpacer/>
 
-        <MudAvatar Color="Color.Info" Variant="Variant.Text">
-            @if (Letter != ' ')
-            {
-                <span>@Letter</span>
-            }
-            else
-            {
-                <MudIcon Icon="@Icons.Outlined.QuestionMark"/>
-            }
-        </MudAvatar>
+            <MudAvatar Color="Color.Info" Variant="Variant.Text">
+                @if (Letter != ' ')
+                {
+                    <span>@Letter</span>
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Outlined.QuestionMark"/>
+                }
+            </MudAvatar>
         <MudTooltip Text="Корзина">
             <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Inherit"/>
         </MudTooltip>

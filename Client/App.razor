@@ -1,9 +1,16 @@
-﻿@using OnlineShop.Client.Shared
+﻿@using OnlineShop.Client.Services
+@using OnlineShop.Client.Services.State
+
+@inject IDialogService _dialogService
+@inject ISnackbar _snackBar
+@inject HttpClient _httpClient
+@inject CookieStorage _cookieStorage
+@inject Navigation _navigationManager
+@inject AppState _appState
 
 <MudThemeProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
-@* <MudBreakpointProvider/> *@
 
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
@@ -17,3 +24,33 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code{
+
+    private async Task OnNavigateAsync(NavigationContext context)
+    {
+        if (context.Path.Contains("/admin/"))
+        {
+            if (_appState.UserState == null)
+            {
+                AbortNavigation();
+                _dialogService.Show<AuthDialog>();
+                return;
+            }
+
+            if (_appState.UserState.Admin)
+                return;
+
+            AbortNavigation();
+            _snackBar.Add("You are not authorized to access this page", Severity.Error);
+        }
+    }
+
+    private void AbortNavigation()
+    {
+        if (_navigationManager.CanNavigateBack)
+            _navigationManager.NavigateBack();
+        else
+            _navigationManager.NavigateTo("/main");
+    }
+}
