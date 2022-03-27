@@ -1,0 +1,36 @@
+﻿@using OnlineShop.Core.Model
+
+<MudCard @key="@Product.Id" Elevation="2" Outlined="true">
+    <MudCardHeader>
+        @Product.Name
+    </MudCardHeader>
+    <MudCardContent>
+        @Product.Description
+        <div>
+            <MudChip Variant="Variant.Text" Label="true" Color="Color.Info">@Product.Vendor.Name</MudChip>
+        </div>
+    </MudCardContent>
+    <MudCardActions>
+        <MudRating ReadOnly="@ReadOnly" SelectedValue="@Stars" Size="Size.Small"></MudRating>
+        <MudSpacer></MudSpacer>
+        <MudButton StartIcon="@Icons.Material.Filled.AddShoppingCart" Variant="Variant.Outlined" Color="Color.Secondary">Buy</MudButton>
+
+    </MudCardActions>
+</MudCard>
+
+@code {
+
+    [Parameter]
+    public Product Product { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    private int Stars = 0;
+
+    protected override void OnInitialized()
+    {
+        Stars = (int) (Product.Rating * 10) / 2;
+        Console.WriteLine(Stars);
+    }
+}

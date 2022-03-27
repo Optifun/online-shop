@@ -13,4 +13,8 @@
         <PackageReference Include="MudBlazor" Version="6.0.7" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Core\online-shop.Core.csproj" />
+    </ItemGroup>
+
 </Project>
