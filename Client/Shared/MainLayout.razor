@@ -3,14 +3,17 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        @* @if (!navMenuOpen) *@
-        @* { *@
-        @*     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle"/> *@
-        @*     <MudLink Href="/main" Underline="Underline.None" Color="Color.Default" Typo="Typo.h5" Class="ml-3 my-auto" Style="color: #fefefe !important;"> *@
-        @*         OnlineShop *@
-        @*     </MudLink> *@
-        @* } *@
+        @if (!navMenuOpen)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle"/>
+        }
+        <MudSpacer/>
+
+        <MudTooltip Text="Корзина">
+            <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Inherit"/>
+        </MudTooltip>
     </MudAppBar>
+
     <NavMenu Open=@navMenuOpen ClickedClose="DrawerToggle"></NavMenu>
     <MudMainContent>
         <div class="content px-4">
