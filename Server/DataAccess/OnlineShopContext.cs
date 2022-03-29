@@ -284,7 +284,7 @@ namespace OnlineShop.Server.DataAccess
                     .HasColumnName("name");
 
                 entity.Property(e => e.PasswordHash)
-                    .HasColumnType("character(64)[]")
+                    .HasMaxLength(64)
                     .HasColumnName("password_hash");
 
                 entity.Property(e => e.Register)

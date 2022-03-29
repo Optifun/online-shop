@@ -14,9 +14,9 @@ namespace OnlineShop.Server.DataAccess
 
         public long Id { get; set; }
         public string Name { get; set; } = null!;
-        public string[] PasswordHash { get; set; } = null!;
         public DateTime Register { get; set; }
         public bool IsAdmin { get; set; }
+        public string PasswordHash { get; set; } = null!;
 
         public virtual ICollection<FavouriteProduct> FavouriteProducts { get; set; }
         public virtual ICollection<Purchase> Purchases { get; set; }
