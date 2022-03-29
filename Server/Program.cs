@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnlineShop.Server.DataAccess;
+using OnlineShop.Server.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +49,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             };
         }
     );
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
 var app = builder.Build();
