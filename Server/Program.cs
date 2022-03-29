@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnlineShop.Server.DataAccess;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +27,27 @@ builder.Services.AddSwaggerGen(c =>
     // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     // c.IncludeXmlComments(xmlPath);
 });
+
+string securityPrivateKey = builder.Configuration.GetValue<string>("Auth:PrivateKey");
+var secKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityPrivateKey));
+builder.Services.AddSingleton(secKey);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+        {
+            options.SaveToken = true;
+            options.RequireHttpsMetadata = true;
+            options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = "blazor.app",
+                ValidAudience = "blazor.users",
+                IssuerSigningKey = secKey
+            };
+        }
+    );
 
 
 var app = builder.Build();
