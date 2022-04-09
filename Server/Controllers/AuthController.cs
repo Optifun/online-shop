@@ -14,7 +14,7 @@ namespace OnlineShop.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class AuthController : Controller
     {
         private readonly SymmetricSecurityKey _securityKey;
         private readonly IUserRepository _userRepository;
