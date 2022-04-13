@@ -48,7 +48,7 @@ namespace OnlineShop.Server.DataAccess
                     .HasIdentityOptions(null, null, null, null, true);
 
                 entity.Property(e => e.Type)
-                    .HasMaxLength(18)
+                    .HasMaxLength(26)
                     .HasColumnName("type");
             });
 
@@ -85,9 +85,7 @@ namespace OnlineShop.Server.DataAccess
                     .UseIdentityAlwaysColumn()
                     .HasIdentityOptions(null, null, null, null, true);
 
-                entity.Property(e => e.Discount)
-                    .HasPrecision(5, 2)
-                    .HasColumnName("discount");
+                entity.Property(e => e.Discount).HasColumnName("discount");
 
                 entity.Property(e => e.ProductId).HasColumnName("product_id");
 
@@ -95,9 +93,7 @@ namespace OnlineShop.Server.DataAccess
                     .HasColumnName("setting_date")
                     .HasDefaultValueSql("now()");
 
-                entity.Property(e => e.Value)
-                    .HasPrecision(12, 3)
-                    .HasColumnName("value");
+                entity.Property(e => e.Value).HasColumnName("value");
             });
 
             modelBuilder.Entity<Product>(entity =>
