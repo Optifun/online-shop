@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using OnlineShop.Server.DataAccess;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,21 @@ namespace OnlineShop.Server.Services
         {
             var price = await _context.Prices.FindAsync(id);
             return price?.Adapt<Price>();
+        }
+
+        public async Task<Price> Create(Price price)
+        {
+            DataAccess.Price p = await CreateRaw(price);
+            
+            return p.Adapt<Price>();
+        }
+
+        public async Task<DataAccess.Price> CreateRaw(Price price)
+        {
+            var entry = _context.Add(price.Adapt<DataAccess.Price>());
+            await _context.SaveChangesAsync();
+
+            return entry.Entity;
         }
     }
 }

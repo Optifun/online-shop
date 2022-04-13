@@ -9,5 +9,7 @@ namespace OnlineShop.Server.Services
         Task<List<Price>> GetByProductId(long productId);
 
         Task<Price?> GetById(long id);
+        Task<Price> Create(Price price);
+        Task<DataAccess.Price> CreateRaw(Price price);
     }
 }
