@@ -19,5 +19,11 @@ namespace OnlineShop.Server.Services
             List<DataAccess.Vendor> listAsync = await _context.Vendors.ToListAsync();
             return listAsync.Adapt<List<Vendor>>();
         }
+
+        public async Task<Vendor?> Get(long id)
+        {
+            var vendor = await _context.Vendors.FindAsync(id);
+            return vendor.Adapt<Vendor>();
+        }
     }
 }
