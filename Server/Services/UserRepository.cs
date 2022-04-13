@@ -9,12 +9,10 @@ namespace OnlineShop.Server.Services
 {
     class UserRepository : IUserRepository
     {
-        private OnlineShopContext _context;
+        private readonly OnlineShopContext _context;
 
-        public UserRepository(OnlineShopContext context)
-        {
+        public UserRepository(OnlineShopContext context) => 
             _context = context;
-        }
 
         public async Task<User?> RegisterUser(UserCredentials credentials)
         {

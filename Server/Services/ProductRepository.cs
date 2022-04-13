@@ -36,11 +36,8 @@ namespace OnlineShop.Server.Services
             return product?.Adapt<Product>();
         }
 
-        public async Task<List<Product>> GetAll()
-        {
-            var products = await _context.Products.ToListAsync();
-            return products.Adapt<List<Product>>();
-        }
+        public async Task<List<Product>> GetAll() => 
+            await _context.Products.ProjectToType<Product>().ToListAsync();
 
         public async Task<Product?> Update(Product product)
         {

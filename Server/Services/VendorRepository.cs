@@ -14,16 +14,13 @@ namespace OnlineShop.Server.Services
         public VendorRepository(OnlineShopContext context) =>
             _context = context;
 
-        public async Task<List<Vendor>> GetAll()
-        {
-            List<DataAccess.Vendor> listAsync = await _context.Vendors.ToListAsync();
-            return listAsync.Adapt<List<Vendor>>();
-        }
+        public async Task<List<Vendor>> GetAll() => 
+            await _context.Vendors.ProjectToType<Vendor>().ToListAsync();
 
         public async Task<Vendor?> Get(long id)
         {
             var vendor = await _context.Vendors.FindAsync(id);
-            return vendor.Adapt<Vendor>();
+            return vendor?.Adapt<Vendor>();
         }
     }
 }

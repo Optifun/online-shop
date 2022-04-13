@@ -11,16 +11,11 @@ namespace OnlineShop.Server.Services
     {
         private readonly OnlineShopContext _context;
 
-        public CategoryRepository(OnlineShopContext context)
-        {
+        public CategoryRepository(OnlineShopContext context) => 
             _context = context;
-        }
 
-        public async Task<List<Category>> GetAll()
-        {
-            var categories = await _context.Categories.ToListAsync();
-            return categories.Adapt<List<Category>>();
-        }
+        public async Task<List<Category>> GetAll() =>
+            await _context.Categories.ProjectToType<Category>().ToListAsync();
 
         public async Task<Category> Get(long id)
         {

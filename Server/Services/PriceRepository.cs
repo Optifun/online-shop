@@ -20,9 +20,10 @@ namespace OnlineShop.Server.Services
         {
             var prices = await _context.Prices
                 .Where(price => price.ProductId == productId)
+                .ProjectToType<Price>()
                 .ToListAsync();
-            
-            return prices.Adapt<List<Price>>();
+
+            return prices;
         }
 
         public async Task<Price?> GetById(long id)
