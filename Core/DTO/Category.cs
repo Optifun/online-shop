@@ -1,4 +1,4 @@
 ﻿namespace OnlineShop.Core.DTO
 {
-    public record Category(int Id, string Name);
+    public record Category(int Id, string Type);
 }
