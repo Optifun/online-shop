@@ -1,12 +1,10 @@
-﻿using Mapster;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using OnlineShop.Core.DTO;
-using OnlineShop.Server.DataAccess;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
+using OnlineShop.Core.DTO;
+using OnlineShop.Server.DataAccess;
 using Category = OnlineShop.Core.Model.Category;
 using Price = OnlineShop.Core.Model.Price;
 using Product = OnlineShop.Core.Model.Product;
@@ -57,19 +55,19 @@ namespace OnlineShop.Server.Services
 
         public async Task<Product> Create(ProductInfo product)
         {
-            var (price, vendor, category) = await FetchDependencies(product);
+            var price = await CreatePrice(product.Price);
 
-            var entityEntry = _context.Products.Add(product.Adapt<DataAccess.Product>());
+            DataAccess.Product entity = product.Adapt<DataAccess.Product>();
+            entity.Price = price;
+
+            var entityEntry = _context.Products.Add(entity);
             await _context.SaveChangesAsync();
 
             price.ProductId = entityEntry.Entity.Id;
             await _context.SaveChangesAsync();
 
             Product newProduct = entityEntry.Entity.Adapt<Product>();
-            newProduct.Category = category;
-            newProduct.Vendor = vendor;
-            newProduct.Price = price.Adapt<Price>();
-            
+
             return newProduct;
         }
 
@@ -98,16 +96,8 @@ namespace OnlineShop.Server.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task<(DataAccess.Price, Vendor, Category)> FetchDependencies(ProductInfo product)
-        {
-            var price = await _priceRepository.CreateRaw(new Price() {Value = product.Price});
-            var vendor = await _vendorRepository.Get(product.VendorId);
-            var category = await _categoryRepository.Get(product.CategoryId);
-
-            if (vendor == null || price == null || category == null)
-                throw new ArgumentException("Wrong vendor or category id", nameof(product));
-            return (price, vendor, category);
-        }
+        private async Task<DataAccess.Price> CreatePrice(float value, float discount = 0) =>
+            await _priceRepository.CreateRaw(new Price() {Value = value, Discount = 0});
 
         private bool ProductExists(long id) =>
             _context.Products.Any(e => e.Id == id);

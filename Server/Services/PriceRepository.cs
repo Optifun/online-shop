@@ -33,14 +33,14 @@ namespace OnlineShop.Server.Services
 
         public async Task<Price> Create(Price price)
         {
-            DataAccess.Price p = await CreateRaw(price);
+            var p = await CreateRaw(price);
             
             return p.Adapt<Price>();
         }
 
         public async Task<DataAccess.Price> CreateRaw(Price price)
         {
-            var entry = _context.Add(price.Adapt<DataAccess.Price>());
+            var entry = _context.Prices.Add(price.Adapt<DataAccess.Price>());
             await _context.SaveChangesAsync();
 
             return entry.Entity;
