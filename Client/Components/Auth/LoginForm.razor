@@ -1,31 +1,80 @@
-﻿<MudPaper>
+﻿@using OnlineShop.Core.DTO
+@using System.Net
+@using OnlineShop.Client.Services
+@using OnlineShop.Client.Services.State
+@using OnlineShop.Core
 
-    <MudTextField @bind-Value="UserName" Label="Имя пользователя" Variant="Variant.Outlined" Margin="Margin.Dense" Error="@Result" />
+@inject ISnackbar _snackbar
+@inject AppState _appState
+@inject HttpClient _client
+@inject CookieStorage _cookieStorage
 
-    <MudTextField @bind-Value="Password" 
-                  Label="Пароль" 
-                  Variant="Variant.Outlined" 
-                  Margin="Margin.Dense" Error="@Result" 
-                  InputType="@PasswordType" 
+<MudPaper>
+
+    <MudTextField @bind-Value="UserName" Label="Имя пользователя" Variant="Variant.Outlined" Margin="Margin.Dense" Error="@ErrorSign"/>
+
+    <MudTextField @bind-Value="Password"
+                  Label="Пароль"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense" Error="@ErrorSign"
+                  InputType="@PasswordType"
                   Adornment="Adornment.End" AdornmentIcon="@VisIcon" OnAdornmentClick="ToggleVisibility"/>
-    @* <MudText Color="Color.Error">@loginError</MudText> *@
+    <MudText Color="Color.Error">@_loginError</MudText>
     <br>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Login" FullWidth="true">Войти</MudButton>
 </MudPaper>
 
 @code {
+
+    [Parameter]
+    public EventCallback<bool> OnLogin { get; set; }
+
     private string UserName { get; set; }
     private string Password { get; set; }
-    private bool Result { get; set; } = false;
+    private bool ErrorSign { get; set; } = false;
+    private string _loginError;
 
     string VisIcon { get; set; }
     InputType PasswordType { get; set; }
     bool passwordVisible = false;
-    
-    private void Login()
+
+    private async Task Login()
     {
+        if (UserName == "" || Password == "")
+        {
+            await SignalError("Заполните пустые поля");
+            return;
+        }
+
+        UserCredentials userCredentials = new(UserName, Password);
+        var response = await _client.PutAsJsonAsync("api/Auth", userCredentials);
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            await SignalError("Неправильное имя пользователя или пароль");
+            return;
+        }
+
+        var state = await response.Content.ReadFromJsonAsync<UserData>();
+        _appState.SetUserState(new UserState() {Admin = state.IsAdmin, UserName = state.Name});
+
+        var token = response.Headers.WwwAuthenticate.FirstOrDefault();
+        _client.DefaultRequestHeaders.Authorization = token;
+        await _cookieStorage.SetCookie("_token", token.Parameter, 1);
         
+        await OnLogin.InvokeAsync(true);
+        _snackbar.Clear();
+        _snackbar.Add("Авторизация прошла успешно", Severity.Info);
+        ErrorSign = false;
     }
+
+    private async Task SignalError(string error)
+    {
+        await OnLogin.InvokeAsync(false);
+        _loginError = error;
+        ErrorSign = true;
+    }
+
     protected override void OnInitialized() =>
         SetVisibility(false);
 

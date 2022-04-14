@@ -1,12 +1,23 @@
-﻿<MudPaper>
-    <MudTextField @bind-Value="Username" Label="Имя пользователя" Variant="Variant.Outlined" Margin="Margin.Dense" Error="@Result"/>
+﻿@using OnlineShop.Core.DTO
+@using System.Net
+@using OnlineShop.Client.Services
+@using OnlineShop.Client.Services.State
+@using OnlineShop.Core
+
+@inject ISnackbar _snackbar
+@inject AppState _appState
+@inject HttpClient _client
+@inject CookieStorage _cookieStorage
+
+<MudPaper>
+    <MudTextField @bind-Value="Username" Label="Имя пользователя" Variant="Variant.Outlined" Margin="Margin.Dense" Error="@ErrorSign"/>
 
     @{
     }
     <MudTextField @bind-Value="Password" Label="Пароль"
                   Variant="Variant.Outlined"
                   Margin="Margin.Dense"
-                  Error="@Result"
+                  Error="@ErrorSign"
                   InputType="@PasswordType"
                   Adornment="Adornment.End"
                   AdornmentIcon="@VisIcon" OnAdornmentClick="ToggleVisibility"/>
@@ -14,7 +25,7 @@
                   Label="Повторите пароль"
                   Variant="Variant.Outlined"
                   Margin="Margin.Dense"
-                  Error="@Result"
+                  Error="@ErrorSign"
                   InputType="@PasswordType"
                   Adornment="Adornment.End"
                   AdornmentIcon="@VisIcon" OnAdornmentClick="ToggleVisibility"/>
@@ -25,19 +36,59 @@
 </MudPaper>
 
 @code {
+
+    [Parameter]
+    public EventCallback<bool> OnRegister { get; set; }
+
     private string Username { get; set; }
     private string Password { get; set; }
     private string PasswordRepeat { get; set; }
 
-    private bool Result { get; set; } = false;
+    private bool ErrorSign { get; set; } = false;
     private string Error { get; set; } = "";
 
     bool passwordVisible = false;
     string VisIcon { get; set; }
     InputType PasswordType { get; set; }
 
-    void Register()
+    async Task Register()
     {
+        if (Username == "" || Password == "" || PasswordRepeat == "")
+        {
+            await SignalError("Заполните пустые поля");
+            return;
+        }
+
+        if (PasswordRepeat != Password)
+        {
+            await SignalError("Пароли не совпадают");
+            return;
+        }
+
+        UserCredentials userCredentials = new(Username, Password);
+        var response = await _client.PostAsJsonAsync("api/Auth", userCredentials);
+
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            await SignalError("Пользователь с таким именем пользователя уже существует");
+            return;
+        }
+        
+        var token = response.Headers.WwwAuthenticate.FirstOrDefault();
+        _client.DefaultRequestHeaders.Authorization = token;
+        await _cookieStorage.SetCookie("_token", token.Parameter, 1);
+        
+        await OnRegister.InvokeAsync(true);
+        _snackbar.Clear();
+        _snackbar.Add("Регистрация прошла успешно", Severity.Info);
+        ErrorSign = false;
+    }
+
+    private async Task SignalError(string error)
+    {
+        await OnRegister.InvokeAsync(false);
+        Error = error;
+        ErrorSign = true;
     }
 
     protected override void OnInitialized() =>

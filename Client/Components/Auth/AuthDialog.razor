@@ -1,9 +1,4 @@
-﻿@using System.Net
-@using System.Net.Http.Headers
-@using OnlineShop.Client.Services.State
-@inject HttpClient client
-@inject ISnackbar Snackbar
-@inject IDialogService Dialog
+﻿@using OnlineShop.Client.Services.State
 @inject AppState _appState
 
 <MudDialog Options="dialogOptions">
@@ -15,18 +10,28 @@
     <DialogContent>
         <MudTabs Elevation="0" Rounded="true" Centered="true" PanelClass="pa-6">
             <MudTabPanel Text="Авторизация">
-                <LoginForm />
+                <LoginForm OnLogin="HandleAuth"/>
             </MudTabPanel>
             <MudTabPanel Text="Регистрация">
-                <RegisterForm/>
+                <RegisterForm OnRegister="HandleAuth"/>
             </MudTabPanel>
         </MudTabs>
     </DialogContent>
 </MudDialog>
+
 @code {
+
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
 
     private DialogOptions dialogOptions = new() {FullWidth = true, CloseButton = true, DisableBackdropClick = true};
+
+    private void HandleAuth(bool result)
+    {
+        if (result)
+        {
+            MudDialog.Close(true);
+        }
+    }
 
 }

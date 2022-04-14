@@ -39,7 +39,7 @@
         string token = await _cookieStorage.GetCookie<string>("_token");
 
         if (token == "")
-            Console.WriteLine($"Fail Fetch");
+            Console.WriteLine($"Token was not found on startup");
         else
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
