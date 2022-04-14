@@ -28,10 +28,12 @@ public class Navigation : IDisposable
         /// Navigates to the specified url.
         /// </summary>
         /// <param name="url">The destination url (relative or absolute).</param>
-        public void NavigateTo(string url)
-        {
-            _navigationManager.NavigateTo(url);
-        }
+        /// <param name="force">Allow to force navigation</param>
+        public void NavigateTo(string url, bool force = false) => 
+            _navigationManager.NavigateTo(url, force);
+
+        public string GetLocation() => 
+            _navigationManager.Uri;
 
         /// <summary>
         /// Returns true if it is possible to navigate to the previous url.

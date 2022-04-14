@@ -1,8 +1,12 @@
 @using MudBlazor
 @using OnlineShop.Client.Components.Auth
+@using OnlineShop.Client.Services
 @using OnlineShop.Client.Services.State
+@using OnlineShop.Core.Model
 @inherits LayoutComponentBase
 @inject IDialogService _dialogService
+@inject CookieStorage _cookieStorage
+@inject Navigation _navigation
 
 <MudLayout>
     <MudAppBar Elevation="1">
@@ -23,6 +27,13 @@
                     <MudIcon Icon="@Icons.Outlined.QuestionMark"/>
                 }
             </MudAvatar>
+            <MudPopover Open="@_logoutOpen" Fixed="true" Class="px-4 pt-4" AnchorOrigin="Origin.BottomCenter">
+                <div class="d-flex flex-column">
+                    <MudText>Вы уверены, что хотите выйти?</MudText>
+                    <MudButton OnClick="Logout" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Выйти</MudButton>
+                    <MudButton OnClick="Toggle" Class="ml-auto mr-n3 mb-1" Color="Color.Info">Отмена</MudButton>
+                </div>
+            </MudPopover>
         </MudButton>
         <MudTooltip Text="Корзина">
             <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Inherit"/>
@@ -44,8 +55,9 @@
 
     bool navMenuOpen = false;
     private char Letter;
+    private bool _logoutOpen;
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         string userName = AppState.UserState?.UserName ?? "";
         Letter = userName != "" ? userName.Substring(0, 1).ToUpper()[0] : ' ';
@@ -58,7 +70,19 @@
 
     private void Auth()
     {
-        _dialogService.Show<AuthDialog>();
+        if (AppState.UserState == null)
+            _dialogService.Show<AuthDialog>();
+        else
+            Toggle();
     }
+
+    private async Task Logout()
+    {
+        await _cookieStorage.SetCookie("_token", "", 0);
+        _navigation.NavigateTo(_navigation.GetLocation(), true);
+    }
+
+    private void Toggle() => 
+        _logoutOpen = !_logoutOpen;
 
 }
