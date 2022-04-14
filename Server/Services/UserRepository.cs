@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
+using OnlineShop.Core;
 using OnlineShop.Core.DTO;
 using OnlineShop.Server.DataAccess;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace OnlineShop.Server.Services
     {
         private readonly OnlineShopContext _context;
 
-        public UserRepository(OnlineShopContext context) => 
+        public UserRepository(OnlineShopContext context) =>
             _context = context;
 
         public async Task<User?> RegisterUser(UserCredentials credentials)
@@ -20,7 +21,7 @@ namespace OnlineShop.Server.Services
             if (registered != null)
                 return null;
 
-            DataAccess.User userEntry = new() {Name = credentials.UserName, PasswordHash = credentials.PasswordHash, IsAdmin = false};
+            DataAccess.User userEntry = new() {Name = credentials.UserName, PasswordHash = Security.Hash(credentials.Password), IsAdmin = false};
 
             var user = await _context.Users.AddAsync(userEntry);
             await _context.SaveChangesAsync();
@@ -29,7 +30,8 @@ namespace OnlineShop.Server.Services
 
         public async Task<User?> LoginUser(UserCredentials credentials)
         {
-            DataAccess.User? user = await _context.Users.FirstOrDefaultAsync(user => user.Name == credentials.UserName && user.PasswordHash == credentials.PasswordHash);
+            string passwordHash = Security.Hash(credentials.Password);
+            DataAccess.User? user = await _context.Users.FirstOrDefaultAsync(user => user.Name == credentials.UserName && user.PasswordHash == passwordHash);
             return user?.Adapt<User>();
         }
 
