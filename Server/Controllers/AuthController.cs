@@ -25,40 +25,55 @@ namespace OnlineShop.Server.Controllers
             _userRepository = userRepository;
         }
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<UserData>> GetUserInfo()
+        {
+            JwtSecurityToken? jwtSecurityToken = HttpContext.Request.GetToken();
+            if (jwtSecurityToken == null)
+                return Unauthorized();
+
+            var payload = jwtSecurityToken.GetPayload<JWTPayload>();
+            var user = await _userRepository.GetById(payload.UserId);
+            if (user == null)
+                return Unauthorized();
+
+            return Ok(user);
+        }
+
         [HttpPost]
         public async Task<ActionResult<UserData>> Post([FromBody] UserCredentials credentials)
         {
             var registered = await _userRepository.GetByName(credentials.UserName);
             if (registered != null)
                 return BadRequest();
-        
+
             var user = await _userRepository.RegisterUser(credentials);
             if (user == null)
                 return BadRequest();
-        
+
             var jwtToken = NewToken(user.Id, user.IsAdmin);
             var userInfo = user.Adapt<UserData>();
-        
+
             HttpContext.Response.Headers.Append("WWW-Authenticate", "Bearer " + jwtToken);
             HttpContext.Response.Cookies.Append("_token", jwtToken);
             return Ok(userInfo);
         }
-        
+
         [HttpPut]
         public async Task<ActionResult<UserData>> Put([FromBody] UserCredentials credentials)
         {
             User? logonUser = await _userRepository.LoginUser(credentials);
             if (logonUser == null)
                 return BadRequest();
-        
+
             var jwtToken = NewToken(logonUser.Id, logonUser.IsAdmin);
             var userInfo = logonUser.Adapt<UserData>();
-        
+
             HttpContext.Response.Headers.Append("WWW-Authenticate", "Bearer " + jwtToken);
             HttpContext.Response.Cookies.Append("_token", jwtToken);
             return Ok(userInfo);
         }
-        
+
         private string NewToken(int userId, bool isAdmin)
         {
             var signingCredentials = new SigningCredentials(_securityKey, SecurityAlgorithms.HmacSha256);

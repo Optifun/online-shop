@@ -1,6 +1,9 @@
 ﻿@using OnlineShop.Client.Services
 @using OnlineShop.Client.Services.State
 @using OnlineShop.Client.Components.Auth
+@using System.Net.Http.Headers
+@using System.Net
+@using OnlineShop.Core.DTO
 
 @inject IDialogService _dialogService
 @inject ISnackbar _snackBar
@@ -29,6 +32,28 @@
 </CascadingValue>
 
 @code{
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine($"Initial User state = {_appState?.UserState}");
+        string token = await _cookieStorage.GetCookie<string>("_token");
+
+        if (token == "")
+            Console.WriteLine($"Fail Fetch");
+        else
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var responseMessage = await _httpClient.GetAsync("api/Auth/GetUserInfo");
+
+            if (responseMessage.StatusCode == HttpStatusCode.OK)
+            {
+                var userState = await responseMessage.Content.ReadFromJsonAsync<UserData>();
+                _appState?.SetUserState(new UserState() {Admin = userState.IsAdmin, UserName = userState.Name});
+            }
+            Console.WriteLine($"Fetch User state = {_appState?.UserState}");
+        }
+    }
+
 
     private async Task OnNavigateAsync(NavigationContext context)
     {
