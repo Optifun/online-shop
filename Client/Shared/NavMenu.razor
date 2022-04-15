@@ -4,7 +4,7 @@
 
     <MudDrawerHeader Style="height: calc(var(--mud-appbar-height) - var(--mud-appbar-height)/4);">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="onClicked"/>
-        <MudLink Href="/main" Underline="Underline.None" Color="Color.Default" Typo="Typo.h5" Class="ml-3 my-auto">
+        <MudLink Href="/" Underline="Underline.None" Color="Color.Default" Typo="Typo.h5" Class="ml-3 my-auto">
             Shop
         </MudLink>
     </MudDrawerHeader>
@@ -18,7 +18,8 @@
                 Личный кабинет
             </MudNavLink>
             <MudNavGroup Title="Админ-панель" Icon="@Icons.Filled.Tab">
-                <MudNavLink Href="/admin/users" >Пользователи</MudNavLink>
+                <MudNavLink Href="/admin">Главная</MudNavLink>
+                <MudNavLink Href="/admin/users">Пользователи</MudNavLink>
                 <MudNavLink Href="/admin/products">Товары</MudNavLink>
                 <MudNavLink Href="/admin/reports">Отчеты</MudNavLink>
             </MudNavGroup>
@@ -38,4 +39,5 @@
     {
         ClickedClose.InvokeAsync();
     }
+
 }
