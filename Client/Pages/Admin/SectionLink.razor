@@ -1,0 +1,24 @@
+﻿<MudLink Href="@Href">
+    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+        <h3 class="d-flex align-center justify-center mud-info-text">
+            <MudIcon Icon="@Icon" Size="Size.Large"/>
+            @Text
+        </h3>
+    </MudPaper>
+</MudLink>
+
+@code {
+
+    [Parameter]
+    public string Href { get; set; }
+    
+    [Parameter]
+    public Color Color { get; set; }
+    
+    [Parameter]
+    public string Text { get; set; }
+    
+    [Parameter]
+    public string Icon { get; set; }
+
+}

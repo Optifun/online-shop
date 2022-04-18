@@ -1,6 +1,13 @@
 ﻿@page "/Admin"
-<h3>index</h3>
 
-@code {
-    
-}
+<MudGrid Justify="Justify.SpaceEvenly">
+    <MudItem xs="3">
+        <SectionLink Icon="@Icons.TwoTone.Person" Href="/admin/users" Text="Пользователи"/>
+    </MudItem>
+    <MudItem xs="3">
+        <SectionLink Icon="@Icons.TwoTone.PointOfSale" Href="/admin/products" Text="Продукты"/>
+    </MudItem>
+    <MudItem xs="3">
+        <SectionLink Icon="@Icons.TwoTone.Report" Href="/admin/reports" Text="Отчеты"/>
+    </MudItem>
+</MudGrid>
