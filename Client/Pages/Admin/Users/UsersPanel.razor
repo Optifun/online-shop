@@ -1,0 +1,42 @@
+﻿@page "/admin/users"
+@using OnlineShop.Client.Services.State
+@using OnlineShop.Core.DTO
+
+<h3>Users</h3>
+<MudDataGrid T="UserData" Items="@Users" ReadOnly="@_readOnly" EditMode="DataGridEditMode.Form"
+             CommittedItemChanges="@CommittedItemChanges"
+             Bordered="true" Dense="true" Striped="true" EditTrigger="DataGridEditTrigger.OnRowClick">
+    <Columns>
+        <Column T="UserData" Field="Id" IsEditable="false"/>
+        <Column T="UserData" Field="Name"/>
+        <Column T="UserData" Field="IsAdmin" Title="Admin" IsEditable="true"/>
+        <Column T="UserData" Field="Register" IsEditable="false" Title="Registered"/>
+        <Column T="UserData" Hidden="@(_isCellEditMode || _readOnly || _editTriggerRowClick)" CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Outlined.Edit" OnClick="@context.Actions.StartEditingItem"/>
+            </CellTemplate>
+        </Column>
+    </Columns>
+</MudDataGrid>
+
+@code {
+
+    [CascadingParameter]
+    public AppState AppState { get; set; }
+
+    private List<UserData> Users;
+    private bool _readOnly;
+    private bool _isCellEditMode;
+    private bool _editTriggerRowClick;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Users = await AppState.FetchUsers();
+    }
+
+    private Task CommittedItemChanges(UserData user)
+    {
+        throw new NotImplementedException();
+    }
+
+}
