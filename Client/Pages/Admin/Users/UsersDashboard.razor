@@ -1,0 +1,100 @@
+﻿@page "/admin/users"
+@using OnlineShop.Client.Services.State
+@using OnlineShop.Core.DTO
+
+<MudContainer>
+
+    <MudTable Items="@Users" OnCommitEditClick="CommitEdit" OnPreviewEditClick="PreviewEdit" Striped="true" Hover="true" Filter="new Func<UserMutable,bool>(FilterFunc)">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Users</MudText>
+            <MudSpacer/>
+            <MudTextField Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mt-0"
+                          IconSize="Size.Medium" Placeholder="Search" @bind-Value="searchString">
+            </MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Admin</MudTh>
+            <MudTh>Registered</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Admin"><MudCheckBox T="bool" @bind-Checked="@context.IsAdmin" ReadOnly="true"/></MudTd>
+            <MudTd DataLabel="Registered">@context.Register</MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Name">
+                <MudTextField T="string" @bind-Text="editingName" Required="true"/>
+            </MudTd>
+            <MudTd DataLabel="Admin">
+                <MudCheckBox T="bool" @bind-Checked="editingAdmin" Color="Color.Secondary" Required="true"/>
+            </MudTd>
+            <MudTd DataLabel="Registered">
+                <MudDatePicker @bind-Date="editingRegister" Color="Color.Secondary" Required="true"/>
+            </MudTd>
+        </RowEditingTemplate>
+        <PagerContent>
+            <MudTablePager/>
+        </PagerContent>
+    </MudTable>
+</MudContainer>
+
+@code {
+
+    [CascadingParameter]
+    public AppState AppState { get; set; }
+
+    private List<UserMutable> Users;
+    private UserMutable SelectedUser;
+    private bool _readOnly;
+    private bool _isCellEditMode;
+    private bool _editTriggerRowClick;
+
+    private string? searchString;
+
+    string editingName;
+    bool editingAdmin;
+    DateTime? editingRegister;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Users = await AppState.FetchUsers();
+    }
+
+
+    private void PreviewEdit(object obj)
+    {
+        SelectedUser = (UserMutable) obj;
+        editingName = SelectedUser.Name;
+        editingAdmin = SelectedUser.IsAdmin;
+        editingRegister = SelectedUser.Register;
+    }
+
+    private async Task CommitEdit()
+    {
+        int id = Users.IndexOf(SelectedUser);
+        SelectedUser.Name = editingName;
+        SelectedUser.IsAdmin = editingAdmin;
+        SelectedUser.Register = editingRegister ?? SelectedUser.Register;
+
+        var newUser = await AppState.UpdateUser(SelectedUser);
+        Users.Remove(SelectedUser);
+        Users.Insert(id, newUser);
+        SelectedUser = newUser;
+    }
+
+    private bool FilterFunc(UserMutable user) 
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (user.Id.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (user.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+}
