@@ -85,9 +85,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.MapControllers();
 app.MapRazorPages();
 app.MapFallbackToFile("index.html");
+app.MapControllers();
 
 app.UseAuthentication();
 app.UseAuthorization();
