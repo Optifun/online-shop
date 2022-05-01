@@ -1,8 +1,8 @@
 ﻿@using MudBlazor
 
-<MudDrawer @bind-Open="Open" Variant="@DrawerVariant.Temporary">
+<MudDrawer Variant="@DrawerVariant.Temporary" Open="Open" DisableOverlay="true" PreserveOpenState="true">
 
-    <MudDrawerHeader Style="height: calc(var(--mud-appbar-height) - var(--mud-appbar-height)/4);">
+    <MudDrawerHeader Dense="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="onClicked"/>
         <MudLink Href="/" Underline="Underline.None" Color="Color.Default" Typo="Typo.h5" Class="ml-3 my-auto">
             Shop
@@ -18,10 +18,10 @@
                 Личный кабинет
             </MudNavLink>
             <MudNavGroup Title="Админ-панель" Icon="@Icons.Filled.Tab">
-                <MudNavLink Href="/admin">Главная</MudNavLink>
-                <MudNavLink Href="/admin/users">Пользователи</MudNavLink>
-                <MudNavLink Href="/admin/products">Товары</MudNavLink>
-                <MudNavLink Href="/admin/reports">Отчеты</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Href="/admin">Главная</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Href="/admin/users">Пользователи</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Href="/admin/products">Товары</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Href="/admin/reports">Отчеты</MudNavLink>
             </MudNavGroup>
         </MudNavMenu>
     </MudDrawerContainer>
