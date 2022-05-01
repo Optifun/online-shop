@@ -1,6 +1,7 @@
 ﻿using OnlineShop.Core.DTO;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace OnlineShop.Client.Services.State
     {
         public event Action StateChanged;
         public UserState? UserState { get; private set; }
-        
+
         private readonly HttpClient _client;
 
         public AppState(HttpClient client)
@@ -24,15 +25,23 @@ namespace OnlineShop.Client.Services.State
             StateChanged?.Invoke();
         }
 
-        public async Task<List<UserData>> FetchUsers()
+        public async Task<List<UserMutable>> FetchUsers()
         {
-            return await Task.CompletedTask.ContinueWith((t) => new List<UserData>()
+            var users = await Task.CompletedTask.ContinueWith((t) => new List<UserData>()
             {
-                new UserData(0, "ASD", false, DateTime.Today),
-                new UserData(1, "ASDW", true, DateTime.Today),
-                new UserData(2, "ASDD", false, DateTime.Today),
-                new UserData(3, "ASDC", false, DateTime.Today),
+                new(0, "ASD", false, DateTime.Today),
+                new(1, "ASDW", true, DateTime.Today),
+                new(2, "ASDD", false, DateTime.Today),
+                new(3, "ASDC", false, DateTime.Today),
+                new(4, "Masha", false, DateTime.Today),
+                new(4, "Danil", true, DateTime.Today),
             });
+            return users.Select(user => new UserMutable(user)).ToList();
+        }
+
+        public async Task<UserMutable> UpdateUser(UserMutable user)
+        {
+            return user;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@page "/admin/users"
+﻿@* @page "/admin/users" *@
 @using OnlineShop.Client.Services.State
 @using OnlineShop.Core.DTO
 
@@ -31,7 +31,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Users = await AppState.FetchUsers();
+        // Users = await AppState.FetchUsers();
     }
 
     private Task CommittedItemChanges(UserData user)
