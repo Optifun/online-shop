@@ -1,4 +1,4 @@
-﻿@using OnlineShop.Core.Model
+﻿@using OnlineShop.Core.DTO
 
 <MudCard @key="@Product.Id" Elevation="2" Outlined="true">
     <MudCardHeader>
@@ -21,7 +21,7 @@
 @code {
 
     [Parameter]
-    public Product Product { get; set; }
+    public ProductCard Product { get; set; }
 
     [Parameter]
     public bool ReadOnly { get; set; }

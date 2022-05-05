@@ -1,54 +1,23 @@
 ﻿@page "/"
 @using OnlineShop.Core.Model
 @using OnlineShop.Client.Components
+@using OnlineShop.Client.Services.State
+@using ProductCard = OnlineShop.Core.DTO.ProductCard
 
 <PageTitle>Index</PageTitle>
 <ProductList Products="Products"/>
 
 @code{
 
-    List<Category> Categories = new List<Category>()
-    {
-        new Category()
-        {
-            Id = 1, Type = "Компьютерные мыши"
-        }
-    };
+    [CascadingParameter]
+    public AppState AppState { get; set; }
 
-    List<Price> Prices = new List<Price>()
-    {
-        new Price() {Id = 1, Discount = 10, Value = 9999, SettingDate = DateTime.Today}
-    };
+    List<ProductCard> Products;
 
-    List<Vendor> Vendors = new List<Vendor>()
+    protected override async Task OnInitializedAsync()
     {
-        new Vendor() {Id = 1, Name = "Razer"}
-    };
-
-    List<Product> Products;
-
-    protected override void OnInitialized()
-    {
-        var product = new Product()
-        {
-            Id = 1,
-            Category = Categories[0],
-            Name = "Мышь Razer",
-            Description = "Гляньте какая крутая мышь ползет и светится",
-            Price = Prices[0],
-            Rating = 0.8,
-            Vendor = Vendors[0],
-            ProductShops = new List<ProductAmmount>()
-        };
-        
-        Products = new List<Product>()
-        {
-            product,
-            product with{ Id = 2},
-            product with{ Id = 3},
-            product with{ Id = 4},
-            product with{ Id = 5},
-        };
+        Products = await AppState.ProductState.FetchCards();
+        Console.WriteLine(Products[0]);
     }
 
 }

@@ -11,12 +11,14 @@ namespace OnlineShop.Client.Services.State
     {
         public event Action StateChanged;
         public UserState? UserState { get; private set; }
+        public ProductState ProductState { get; private set; }
 
         private readonly HttpClient _client;
 
         public AppState(HttpClient client)
         {
             _client = client;
+            ProductState = new ProductState();
         }
 
         public void SetUserState(UserState state)

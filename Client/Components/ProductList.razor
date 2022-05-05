@@ -1,16 +1,16 @@
-﻿@using OnlineShop.Core.Model
+﻿@using OnlineShop.Core.DTO
 
 <MudContainer Class="d-flex flex-wrap gap-4" MaxWidth="MaxWidth.Large">
     @foreach (var product in Products)
     {
-        <ProductCard ReadOnly="@ReadOnly" Product=@product/>
+        <ProductCardView ReadOnly="@ReadOnly" Product=@product/>
     }
 </MudContainer>
 
 @code {
 
     [Parameter]
-    public List<Product> Products { get; set; }
+    public List<ProductCard> Products { get; set; }
 
     [Parameter]
     public bool ReadOnly { get; set; } = true;
