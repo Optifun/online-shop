@@ -1,6 +1,9 @@
 ﻿using Mapster;
+using OnlineShop.Core.DTO;
 using OnlineShop.Core.Model;
 using System.Linq;
+using Product = OnlineShop.Core.Model.Product;
+using ProductDTO = OnlineShop.Core.DTO.Product;
 
 namespace OnlineShop.Server
 {
@@ -8,8 +11,12 @@ namespace OnlineShop.Server
     {
         public void Register(TypeAdapterConfig config)
         {
-            config.ForType<DataAccess.Product, Product>()
-                .Map(nameof(Product.Rating), prod => prod.Reviews.Count > 0 ? prod.Reviews.Average(rev => rev.Rating) : 0);
+            config.ForType<Product, ProductCard>()
+                .Map(nameof(ProductCard.Rating), prod => prod.Reviews.Count > 0 ? prod.Reviews.Average(rev => rev.Rating) : 0);
+            
+            config.ForType<ProductDTO, ProductCard>()
+                .Map(nameof(ProductCard.Rating), prod => prod.Reviews.Count > 0 ? prod.Reviews.Average(rev => rev.Rating) : 0);
+            
             // .Map(product => product.Price, product => product.Price)
             // .Map(product => product.Vendor, product => product.Vendor)
             // .Map(product => product.Category, product => product.Category);
