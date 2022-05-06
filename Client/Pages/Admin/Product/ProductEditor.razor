@@ -37,8 +37,8 @@
     protected override async Task OnInitializedAsync()
     {
         Value = Product != null ? new ProductCardMutable(Product) : new ProductCardMutable();
-        var vendors = await AppState.VendorState.Fetch();
-        var categories = await AppState.VendorState.Fetch();
+        var vendors = await AppState.Vendor.Fetch();
+        var categories = await AppState.Vendor.Fetch();
     }
 
     private void Cancel() => MudDialog.Cancel();

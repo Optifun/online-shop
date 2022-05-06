@@ -10,25 +10,25 @@ namespace OnlineShop.Client.Services.State
     public class AppState
     {
         public event Action StateChanged;
-        public UserState? UserState { get; private set; }
-        public ProductState ProductState { get; private set; }
+        public UserState? CurrentUser { get; private set; }
+        public ProductState Product { get; private set; }
 
-        public VendorState VendorState { get; private set; }
-        public CategoryState CategoryState { get; private set; }
+        public VendorState Vendor { get; private set; }
+        public CategoryState Category { get; private set; }
         
         private readonly HttpClient _client;
 
         public AppState(HttpClient client)
         {
             _client = client;
-            ProductState = new ProductState();
-            VendorState = new VendorState();
-            CategoryState = new CategoryState();
+            Product = new ProductState();
+            Vendor = new VendorState();
+            Category = new CategoryState();
         }
 
         public void SetUserState(UserState state)
         {
-            UserState = state;
+            CurrentUser = state;
             StateChanged?.Invoke();
         }
 

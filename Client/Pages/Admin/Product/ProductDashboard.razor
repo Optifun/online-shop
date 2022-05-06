@@ -79,7 +79,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Products = await AppState.ProductState.FetchCards();
+        Products = await AppState.Product.FetchCards();
     }
 
     private string FormatPrice(Price price)

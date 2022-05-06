@@ -59,7 +59,7 @@
 
     protected override void OnParametersSet()
     {
-        string userName = AppState.UserState?.UserName ?? "";
+        string userName = AppState.CurrentUser?.UserName ?? "";
         Letter = userName != "" ? userName.Substring(0, 1).ToUpper()[0] : ' ';
     }
 
@@ -70,7 +70,7 @@
 
     private void Auth()
     {
-        if (AppState.UserState == null)
+        if (AppState.CurrentUser == null)
             _dialogService.Show<AuthDialog>();
         else
             Toggle();

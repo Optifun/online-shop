@@ -35,7 +35,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine($"Initial User state = {_appState?.UserState}");
+        Console.WriteLine($"Initial User state = {_appState?.CurrentUser}");
         string token = await _cookieStorage.GetCookie<string>("_token");
 
         if (token == "")
@@ -50,7 +50,7 @@
                 var userState = await responseMessage.Content.ReadFromJsonAsync<UserData>();
                 _appState?.SetUserState(new UserState() {Admin = userState.IsAdmin, UserName = userState.Name});
             }
-            Console.WriteLine($"Fetch User state = {_appState?.UserState}");
+            Console.WriteLine($"Fetch User state = {_appState?.CurrentUser}");
         }
     }
 
@@ -59,14 +59,14 @@
     {
         if (context.Path.Contains("/admin/"))
         {
-            if (_appState.UserState == null)
+            if (_appState.CurrentUser == null)
             {
                 AbortNavigation();
                 _dialogService.Show<AuthDialog>();
                 return;
             }
 
-            if (_appState.UserState.Admin)
+            if (_appState.CurrentUser.Admin)
                 return;
 
             AbortNavigation();
