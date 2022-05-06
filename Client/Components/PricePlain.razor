@@ -1,0 +1,30 @@
+﻿@using OnlineShop.Core.DTO
+
+@if (Price.Discount > 0)
+{
+    <MudText>
+        @totalPrice <s>@oldPrice</s> (<MudText Inline="true" Color="Color.Error">-@discount</MudText>)
+    </MudText>
+}
+else
+{
+    <MudText>@totalPrice</MudText>
+}
+
+@code {
+
+    [Parameter]
+    public IPrice Price { get; set; }
+
+    private string totalPrice;
+    private string oldPrice;
+    private string discount;
+
+    protected override void OnParametersSet()
+    {
+        totalPrice = Price.ApplyDiscount().ToString("N2");
+        oldPrice = Price.Value.ToString("N2");
+        discount = Price.Discount.ToString("P");
+    }
+
+}

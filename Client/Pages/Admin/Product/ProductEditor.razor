@@ -1,6 +1,6 @@
 ﻿@using OnlineShop.Core.DTO
 @using OnlineShop.Client.Services.State
-@using System.ComponentModel.DataAnnotations
+@using OnlineShop.Client.Components
 
 <MudDialog>
     <DialogContent>
@@ -10,14 +10,14 @@
                     <MudField Label="Id">@(Value.Id ?? 0)</MudField>
                     <MudTextField @bind-Value="Value.Name" Label="Name" For="@(() => Value.Name)" Required="true"></MudTextField>
                     <MudTextField @bind-Value="Value.Description" Label="Description" For="@(() => Value.Description)" Required="true"></MudTextField>
-                    
+
                     <MudSelect T="Vendor" Label="Vendor" For="@(() => Value.Vendor)" Required="true">
                         @foreach (var v in Vendors)
                         {
                             <MudSelectItem Value="v">@v.Name</MudSelectItem>
                         }
                     </MudSelect>
-                    
+
                     <MudSelect T="Category" Label="Category" For="@(() => Value.Category)" Required="true">
                         @foreach (var c in Categories)
                         {
@@ -25,13 +25,13 @@
                         }
                     </MudSelect>
                 </MudPaper>
-                
+
                 <MudStack Justify="Justify.SpaceBetween" Class="d-flex flex-column pa-4">
                     <MudPaper Elevation="3" Class="pa-4">
-                        aasd
-                        wdad
-                        wdawd
-                        awda
+                        @foreach (var price in Prices)
+                        {
+                            <PricePlain Price="price"/>
+                        }
                     </MudPaper>
                     <MudPaper Elevation="3" Class="pa-4">
                         <MudStack Row="true">
@@ -89,12 +89,15 @@
     public List<Category>? Categories { get; set; }
 
     [Parameter]
+    public List<Price>? Prices { get; set; }
+
+    [Parameter]
     public string ActionText { get; set; }
 
     ProductCardMutable Value { get; set; }
 
-    double totalPrice => Value.Price.Value * (100 - Value.Price.Discount) / 100;
-
+    double totalPrice => Value.Price.ApplyDiscount();
+    
     private bool IsValid { get; set; }
     private string[]? Errors { get; set; }
 

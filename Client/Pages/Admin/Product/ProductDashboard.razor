@@ -143,7 +143,7 @@
     {
         var parameters = await InitParameters();
         parameters.Add("ActionText", "Создать");
-        
+
         var dialog = _dialogService.Show<ProductEditor>("Новый продукт", parameters, DialogOptions);
         var result = await dialog.Result;
 
@@ -156,10 +156,12 @@
 
     private async Task Edit()
     {
+        var prices = await AppState.Price.Fetch(_selectedProduct.Id);
         var parameters = await InitParameters();
         parameters.Add("ActionText", "Сохранить");
         parameters.Add("Product", _selectedProduct);
-        
+        parameters.Add("Prices", prices);
+
         var dialog = _dialogService.Show<ProductEditor>("Редактирование", parameters, DialogOptions);
         var result = await dialog.Result;
 
