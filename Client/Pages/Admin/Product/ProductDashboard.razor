@@ -1,0 +1,132 @@
+﻿@page "/admin/products"
+@using OnlineShop.Client.Services.State
+@using OnlineShop.Core.DTO
+@using System.Globalization
+
+<style>
+    .selected {
+        background-color: @Colors.Indigo.Lighten1 !important;
+    }
+
+    .selected > td {
+        color: white !important;
+    }
+
+    .selected > td .mud-input {
+        color: white !important;
+    }
+</style>
+
+<MudContainer>
+
+    <MudTable T="ProductCard" Filter="@(new Func<ProductCard, bool>(FilterFunc))" Items="@Products" Hover="true" Striped="true" @bind-Ref="_table"
+              SelectedItem="_selectedProduct" SelectedItemChanged="SelectionChanged"
+              RowClassFunc="RowClassFunc">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Users</MudText>
+            <MudSpacer/>
+            <div class="d-flex px-2">
+                <MudTextField Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mt-0"
+                              IconSize="Size.Medium" Placeholder="Search" @bind-Value="searchString">
+                </MudTextField>
+                <MudButton Class="mx-4" OnClick="Drop" Variant="Variant.Filled" Color="Color.Secondary">Drop Selection</MudButton>
+                <MudButton Class="mx-2" OnClick="Edit" Disabled="@_readOnly" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.Edit">Edit</MudButton>
+            </div>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Name</MudTh>
+            <MudTh>Price</MudTh>
+            <MudTh>Vendor</MudTh>
+            <MudTh>Category</MudTh>
+            <MudTh>Rating</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Price">@FormatPrice(context.Price) ₽</MudTd>
+            <MudTd DataLabel="Vendor">@context.Vendor.Name</MudTd>
+            <MudTd DataLabel="Category">@context.Category.Type</MudTd>
+            <MudTd DataLabel="Rating">@context.Rating</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager/>
+        </PagerContent>
+    </MudTable>
+</MudContainer>
+
+@code {
+
+    [CascadingParameter]
+    public AppState AppState { get; set; }
+
+    private List<ProductCard> Products;
+    private MudTable<ProductCard> _table;
+
+    private bool _readOnly = true;
+    private bool _isCellEditMode;
+    private bool _editTriggerRowClick;
+
+    private string? searchString;
+    private ProductCard? _selectedProduct;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Products = await AppState.ProductState.FetchCards();
+    }
+
+    private string FormatPrice(Price price)
+    {
+        float priceValue = price.Discount == 0 ? price.Value : price.Value * price.Discount;
+        var priceStr = priceValue.ToString(CultureInfo.CurrentCulture);
+
+        double discount = Math.Round(price.Discount * 100, MidpointRounding.ToZero);
+        string discountStr = discount.ToString(CultureInfo.CurrentCulture);
+
+        return price.Discount == 0 ?
+            priceStr :
+            priceStr + $"(-{discountStr})";
+    }
+
+    private void Edit()
+    {
+    }
+
+    private bool FilterFunc(ProductCard card)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (card.Id.ToString().Contains(searchString, StringComparison.Ordinal))
+            return true;
+        if (card.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (FormatPrice(card.Price).Contains(searchString, StringComparison.Ordinal))
+            return true;
+        return false;
+    }
+
+    private void SelectionChanged(object obj)
+    {
+        var productCard = obj as ProductCard;
+        Console.WriteLine(obj);
+
+        _readOnly = productCard == null && productCard != _selectedProduct;
+        _selectedProduct = _readOnly ? null : productCard;
+    }
+
+    private string RowClassFunc(ProductCard card, int index)
+    {
+        if (_selectedProduct == card && index != -1)
+            return "selected";
+        else
+            return string.Empty;
+    }
+
+    private void Drop()
+    {
+        _selectedProduct = null;
+        _readOnly = false;
+    }
+
+}
