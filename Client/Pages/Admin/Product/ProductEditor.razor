@@ -1,0 +1,48 @@
+﻿@using OnlineShop.Core.DTO
+@using OnlineShop.Client.Services.State
+
+<MudDialog>
+    <DialogContent>
+        <MudForm>
+            <MudTextField @bind-Value="Value.Name" Label="Name"></MudTextField>
+            <MudTextField @bind-Value="Value.Description" Label="Description"></MudTextField>
+            <MudSelect T="string" Label="Vendor">
+                <MudSelectItem T="string">asd</MudSelectItem>
+                <MudSelectItem T="string">asdw</MudSelectItem>
+            </MudSelect>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="@Color.Secondary" Variant="Variant.Filled" OnClick="Submit">@ActionText</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    
+    [CascadingParameter]
+    public AppState AppState { get; set; }
+
+    [Parameter]
+    public ProductCard? Product { get; set; }
+
+    [Parameter]
+    public string ActionText { get; set; }
+
+    ProductCardMutable Value { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Value = Product != null ? new ProductCardMutable(Product) : new ProductCardMutable();
+        var vendors = await AppState.VendorState.Fetch();
+        var categories = await AppState.VendorState.Fetch();
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit() => MudDialog.Close(ProductCard.Convert(Value));
+
+}
