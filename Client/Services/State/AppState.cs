@@ -13,12 +13,15 @@ namespace OnlineShop.Client.Services.State
         public UserState? UserState { get; private set; }
         public ProductState ProductState { get; private set; }
 
+        public VendorState VendorState { get; private set; }
+        
         private readonly HttpClient _client;
 
         public AppState(HttpClient client)
         {
             _client = client;
             ProductState = new ProductState();
+            VendorState = new VendorState();
         }
 
         public void SetUserState(UserState state)
