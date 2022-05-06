@@ -14,6 +14,7 @@ namespace OnlineShop.Client.Services.State
         public ProductState ProductState { get; private set; }
 
         public VendorState VendorState { get; private set; }
+        public CategoryState CategoryState { get; private set; }
         
         private readonly HttpClient _client;
 
@@ -22,6 +23,7 @@ namespace OnlineShop.Client.Services.State
             _client = client;
             ProductState = new ProductState();
             VendorState = new VendorState();
+            CategoryState = new CategoryState();
         }
 
         public void SetUserState(UserState state)
