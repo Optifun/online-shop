@@ -11,14 +11,14 @@
                     <MudTextField @bind-Value="Value.Name" Label="Name" For="@(() => Value.Name)" Required="true"></MudTextField>
                     <MudTextField @bind-Value="Value.Description" Label="Description" For="@(() => Value.Description)" Required="true"></MudTextField>
 
-                    <MudSelect T="Vendor" Label="Vendor" For="@(() => Value.Vendor)" Required="true">
+                    <MudSelect T="Vendor" Label="Vendor" For="@(() => Value.Vendor)" Required="true" @bind-Value="@Value.Vendor">
                         @foreach (var v in Vendors)
                         {
                             <MudSelectItem Value="v">@v.Name</MudSelectItem>
                         }
                     </MudSelect>
 
-                    <MudSelect T="Category" Label="Category" For="@(() => Value.Category)" Required="true">
+                    <MudSelect T="Category" Label="Category" For="@(() => Value.Category)" Required="true" @bind-Value="@Value.Category">
                         @foreach (var c in Categories)
                         {
                             <MudSelectItem Value="c">@c.Type</MudSelectItem>
@@ -27,12 +27,15 @@
                 </MudPaper>
 
                 <MudStack Justify="Justify.SpaceBetween" Class="d-flex flex-column pa-4">
-                    <MudPaper Elevation="3" Class="pa-4">
-                        @foreach (var price in Prices)
-                        {
-                            <PricePlain Price="price"/>
-                        }
-                    </MudPaper>
+                    @if (Prices != null)
+                    {
+                        <MudPaper Elevation="3" Class="pa-4">
+                            @foreach (var price in Prices)
+                            {
+                                <PricePlain Price="price"/>
+                            }
+                        </MudPaper>
+                    }
                     <MudPaper Elevation="3" Class="pa-4">
                         <MudStack Row="true">
                             <div>
@@ -97,7 +100,7 @@
     ProductCardMutable Value { get; set; }
 
     double totalPrice => Value.Price.ApplyDiscount();
-    
+
     private bool IsValid { get; set; }
     private string[]? Errors { get; set; }
 
