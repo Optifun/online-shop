@@ -131,9 +131,19 @@
         _readOnly = false;
     }
 
+    async Task<DialogParameters> InitParameters()
+    {
+        List<Vendor> vendors = await AppState.Vendor.Fetch();
+        List<Category> categories = await AppState.Category.Fetch();
+        var parameters = new DialogParameters {["Vendors"] = vendors, ["Categories"] = categories};
+        return parameters;
+    }
+
     private async Task Create()
     {
-        var parameters = new DialogParameters {["ActionText"] = "Создать"};
+        var parameters = await InitParameters();
+        parameters.Add("ActionText", "Создать");
+        
         var dialog = _dialogService.Show<ProductEditor>("Новый продукт", parameters, DialogOptions);
         var result = await dialog.Result;
 
@@ -146,7 +156,10 @@
 
     private async Task Edit()
     {
-        var parameters = new DialogParameters {["Product"] = _selectedProduct, ["ActionText"] = "Сохранить"};
+        var parameters = await InitParameters();
+        parameters.Add("ActionText", "Сохранить");
+        parameters.Add("Product", _selectedProduct);
+        
         var dialog = _dialogService.Show<ProductEditor>("Редактирование", parameters, DialogOptions);
         var result = await dialog.Result;
 

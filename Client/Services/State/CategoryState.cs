@@ -11,11 +11,11 @@ namespace OnlineShop.Client.Services.State
 
         public Task<List<Category>> Fetch()
         {
-            var products = Enumerable.Range(0, 4).Select(id =>
+            var categories = Enumerable.Range(0, 4).Select(id =>
                 new Category(id,
                     category[id])).ToList();
-
-            return Task.FromResult(products);
+            
+            return Task.FromResult(categories);
         }
     }
 }

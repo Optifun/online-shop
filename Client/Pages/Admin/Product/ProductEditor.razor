@@ -1,15 +1,68 @@
 ﻿@using OnlineShop.Core.DTO
 @using OnlineShop.Client.Services.State
+@using System.ComponentModel.DataAnnotations
 
 <MudDialog>
     <DialogContent>
-        <MudForm>
-            <MudTextField @bind-Value="Value.Name" Label="Name"></MudTextField>
-            <MudTextField @bind-Value="Value.Description" Label="Description"></MudTextField>
-            <MudSelect T="string" Label="Vendor">
-                <MudSelectItem T="string">asd</MudSelectItem>
-                <MudSelectItem T="string">asdw</MudSelectItem>
-            </MudSelect>
+        <MudForm Model="@Value" @bind-Errors="@Errors" @bind-IsValid="IsValid">
+            <MudStack Row="true">
+                <MudPaper Class="pa-4 ma-4" Elevation="3">
+                    <MudField Label="Id">@(Value.Id ?? 0)</MudField>
+                    <MudTextField @bind-Value="Value.Name" Label="Name" For="@(() => Value.Name)" Required="true"></MudTextField>
+                    <MudTextField @bind-Value="Value.Description" Label="Description" For="@(() => Value.Description)" Required="true"></MudTextField>
+                    
+                    <MudSelect T="Vendor" Label="Vendor" For="@(() => Value.Vendor)" Required="true">
+                        @foreach (var v in Vendors)
+                        {
+                            <MudSelectItem Value="v">@v.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    
+                    <MudSelect T="Category" Label="Category" For="@(() => Value.Category)" Required="true">
+                        @foreach (var c in Categories)
+                        {
+                            <MudSelectItem Value="c">@c.Type</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudPaper>
+                
+                <MudStack Justify="Justify.SpaceBetween" Class="d-flex flex-column pa-4">
+                    <MudPaper Elevation="3" Class="pa-4">
+                        aasd
+                        wdad
+                        wdawd
+                        awda
+                    </MudPaper>
+                    <MudPaper Elevation="3" Class="pa-4">
+                        <MudStack Row="true">
+                            <div>
+                                <MudInputLabel ForId="prod_price">Price before discount</MudInputLabel>
+                                <MudInput id="prod_price" Variant="Variant.Outlined" InputType="InputType.Text" Label="Price before discount" @bind-Value="@(Value.Price.Value)" For="@(() => Value.Price.Value)"/>
+                            </div>
+
+                            <div>
+                                <MudInputLabel ForId="prod_discount">Discount</MudInputLabel>
+                                <MudInput id="prod_discount" Variant="Variant.Outlined" InputType="InputType.Text" Label="Discount" @bind-Value="@(Value.Price.Discount)" For="@(() => Value.Price.Discount)"/>
+                            </div>
+
+                            <div>
+                                <MudInputLabel ForId="prod_total">Total price</MudInputLabel>
+                                <MudInput id="prod_total" Variant="Variant.Outlined" InputType="InputType.Text" ReadOnly="true" Label="Total price" Value="@totalPrice"/>
+                            </div>
+                        </MudStack>
+                    </MudPaper>
+                </MudStack>
+            </MudStack>
+
+            @if (!IsValid)
+            {
+                <MudPaper Class="pa-2 mx-4">
+                    @foreach (var error in Errors)
+                    {
+                        <MudText Color="@Color.Error" Class="mx-2">@error</MudText>
+                    }
+                </MudPaper>
+            }
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -22,7 +75,7 @@
 
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; }
-    
+
     [CascadingParameter]
     public AppState AppState { get; set; }
 
@@ -30,15 +83,34 @@
     public ProductCard? Product { get; set; }
 
     [Parameter]
+    public List<Vendor>? Vendors { get; set; }
+
+    [Parameter]
+    public List<Category>? Categories { get; set; }
+
+    [Parameter]
     public string ActionText { get; set; }
 
     ProductCardMutable Value { get; set; }
 
+    double totalPrice => Value.Price.Value * (100 - Value.Price.Discount) / 100;
+
+    private bool IsValid { get; set; }
+    private string[]? Errors { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        Value = Product != null ? new ProductCardMutable(Product) : new ProductCardMutable();
-        var vendors = await AppState.Vendor.Fetch();
-        var categories = await AppState.Vendor.Fetch();
+    }
+
+    protected override void OnParametersSet()
+    {
+        Value = Product != null
+            ? new ProductCardMutable(Product)
+            : new ProductCardMutable() {Price = new PriceMutable()};
+
+        Vendors ??= new List<Vendor>();
+        Categories ??= new List<Category>();
+        Errors ??= Array.Empty<string>();
     }
 
     private void Cancel() => MudDialog.Cancel();
