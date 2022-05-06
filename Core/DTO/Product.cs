@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnlineShop.Core.DTO
 {
@@ -7,12 +8,12 @@ namespace OnlineShop.Core.DTO
     public record ProductCard(long Id, string Name, string Description, double Rating, Price Price, Vendor Vendor, Category Category)
     {
         public static ProductCard Convert(ProductCardMutable card) =>
-            new ProductCard(card.Id ?? 0, card.Name, card.Description, card.Rating, card.Price, card.Vendor, card.Category);
+            new ProductCard(card.Id ?? 0, card.Name, card.Description, card.Rating, Price.Convert(card.Price), card.Vendor, card.Category);
     }
 
     public record ProductInfo(string Name, string Description, float Price, long VendorId, long CategoryId);
 
-    public record ProductCardMutable
+    public class ProductCardMutable
     {
         public ProductCardMutable(long Id, string Name, string Description, double Rating, Price Price, Vendor Vendor, Category Category)
         {
@@ -20,7 +21,7 @@ namespace OnlineShop.Core.DTO
             this.Name = Name;
             this.Description = Description;
             this.Rating = Rating;
-            this.Price = Price;
+            this.Price = new PriceMutable(Price);
             this.Vendor = Vendor;
             this.Category = Category;
         }
@@ -34,18 +35,14 @@ namespace OnlineShop.Core.DTO
         }
 
         public long? Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public double Rating { get; set; }
-        public Price Price { get; set; }
-        public Vendor Vendor { get; set; }
-        public Category Category { get; set; }
 
-        public void Deconstruct(out string Name, out string Description, out Price Price)
-        {
-            Name = this.Name;
-            Description = this.Description;
-            Price = this.Price;
-        }
+        [Required, MinLength(3), StringLength(18)]
+        public string Name { get; set; }
+
+        [Required, MinLength(5)] public string Description { get; set; }
+        public double Rating { get; set; }
+        public PriceMutable Price { get; set; } = null!;
+        [Required] public Vendor? Vendor { get; set; }
+        [Required] public Category? Category { get; set; }
     }
 }
