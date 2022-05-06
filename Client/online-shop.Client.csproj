@@ -12,6 +12,10 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.1" PrivateAssets="all" />
         <PackageReference Include="MudBlazor" Version="6.0.9" />
     </ItemGroup>
+    
+    <Target Name="CollectMudBlazorStaticAssets" DependsOnTargets="ResolveStaticWebAssetsInputs" AfterTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
+        <Copy SourceFiles="%(StaticWebAsset.Identity)" DestinationFolder="wwwroot/mudblazor" Condition="$([System.String]::Copy(%(StaticWebAsset.Identity)).Contains('mudblazor'))" />
+    </Target>
 
     <ItemGroup>
       <ProjectReference Include="..\Core\online-shop.Core.csproj" />
