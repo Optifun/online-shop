@@ -4,6 +4,7 @@ using OnlineShop.Core.Model;
 using System.Linq;
 using Product = OnlineShop.Core.Model.Product;
 using ProductDTO = OnlineShop.Core.DTO.Product;
+using ReviewDB = OnlineShop.Server.DataAccess.Review;
 
 namespace OnlineShop.Server
 {
@@ -16,7 +17,9 @@ namespace OnlineShop.Server
             
             config.ForType<ProductDTO, ProductCard>()
                 .Map(nameof(ProductCard.Rating), prod => prod.Reviews.Count > 0 ? prod.Reviews.Average(rev => rev.Rating) : 0);
-            
+
+            config.ForType<ReviewDB, Review>().MaxDepth(1);
+
             // .Map(product => product.Price, product => product.Price)
             // .Map(product => product.Vendor, product => product.Vendor)
             // .Map(product => product.Category, product => product.Category);
