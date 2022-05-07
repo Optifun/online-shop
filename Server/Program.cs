@@ -12,6 +12,8 @@ using OnlineShop.Server.Services;
 using System.Collections.Generic;
 using System.Text;
 
+const string debugBlazorApp = "_debugBlazorApp";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -30,6 +32,15 @@ builder.Services.AddSwaggerGen(c =>
     // var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     // c.IncludeXmlComments(xmlPath);
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: debugBlazorApp,
+        policy  =>
+        {
+            policy.WithOrigins("http://localhost:7207");
+        });
 });
 
 string securityPrivateKey = builder.Configuration.GetValue<string>("Auth:PrivateKey");
@@ -84,6 +95,9 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+if (app.Environment.IsDevelopment()) 
+    app.UseCors(debugBlazorApp);
 
 app.MapRazorPages();
 app.MapFallbackToFile("index.html");
