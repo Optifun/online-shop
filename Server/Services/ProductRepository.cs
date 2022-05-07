@@ -52,7 +52,7 @@ namespace OnlineShop.Server.Services
 
         public async Task<Product> Create(ProductInfo product)
         {
-            var price = await CreatePrice(product.Price);
+            var price = await CreatePrice(product.Price.Value, product.Price.Discount);
 
             DataAccess.Product entity = product.Adapt<DataAccess.Product>();
             entity.Price = price;

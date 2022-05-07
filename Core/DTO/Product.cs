@@ -11,7 +11,7 @@ namespace OnlineShop.Core.DTO
             new ProductCard(card.Id ?? 0, card.Name, card.Description, card.Rating, Price.Convert(card.Price), card.Vendor, card.Category);
     }
 
-    public record ProductInfo(string Name, string Description, float Price, long VendorId, long CategoryId);
+    public record ProductInfo(string Name, string Description, Price Price, long VendorId, long CategoryId);
     
     public class ProductAmount
     {
