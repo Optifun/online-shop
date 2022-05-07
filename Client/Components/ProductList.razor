@@ -1,16 +1,28 @@
 ﻿@using OnlineShop.Core.DTO
 
 <MudContainer Class="d-flex flex-wrap gap-4" MaxWidth="MaxWidth.Large">
-    @foreach (var product in Products)
+    @if (Products == null)
     {
-        <ProductCardView ReadOnly="@ReadOnly" Product=@product/>
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
+    }
+    else
+    {
+        @foreach (var product in Products)
+        {
+            <ProductCardView ReadOnly="@ReadOnly" Product=@product/>
+        }
     }
 </MudContainer>
 
 @code {
 
     [Parameter]
-    public List<ProductCard> Products { get; set; }
+    public List<ProductCard>? Products { get; set; }
 
     [Parameter]
     public bool ReadOnly { get; set; } = true;
