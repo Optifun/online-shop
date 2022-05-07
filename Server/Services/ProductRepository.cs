@@ -94,7 +94,7 @@ namespace OnlineShop.Server.Services
         }
 
         private async Task<DataAccess.Price> CreatePrice(float value, float discount = 0) =>
-            await _priceRepository.CreateRaw(new Price() {Value = value, Discount = 0});
+            await _priceRepository.CreateRaw(new Price() {Value = value, Discount = discount});
 
         private bool ProductExists(long id) =>
             _context.Products.Any(e => e.Id == id);
