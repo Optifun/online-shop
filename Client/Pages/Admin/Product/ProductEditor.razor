@@ -7,6 +7,7 @@
         <MudForm Model="@Value" @bind-Errors="@Errors" @bind-IsValid="IsValid">
             <MudStack Row="true">
                 <MudPaper Class="pa-4 ma-4" Elevation="3">
+                    <MudText>Edit product</MudText>
                     <MudField Label="Id">@(Value.Id ?? 0)</MudField>
                     <MudTextField @bind-Value="Value.Name" Label="Name" For="@(() => Value.Name)" Required="true"></MudTextField>
                     <MudTextField @bind-Value="Value.Description" Label="Description" For="@(() => Value.Description)" Required="true"></MudTextField>
@@ -27,9 +28,10 @@
                 </MudPaper>
 
                 <MudStack Justify="Justify.SpaceBetween" Class="d-flex flex-column pa-4">
-                    @if (Prices != null)
+                    @if (Prices != null || Prices.Count == 0)
                     {
                         <MudPaper Elevation="3" Class="pa-4">
+                            <MudText>Previous prices</MudText>
                             @foreach (var price in Prices)
                             {
                                 <PricePlain Price="price"/>
@@ -37,7 +39,8 @@
                         </MudPaper>
                     }
                     <MudPaper Elevation="3" Class="pa-4">
-                        <MudStack Row="true">
+                        <MudText>Set/Update price</MudText>
+                        <MudStack Row="true"  Class="align-center">
                             <div>
                                 <MudInputLabel ForId="prod_price">Price before discount</MudInputLabel>
                                 <MudInput id="prod_price" Variant="Variant.Outlined" InputType="InputType.Text" Label="Price before discount" @bind-Value="@(Value.Price.Value)" For="@(() => Value.Price.Value)"/>
@@ -52,6 +55,7 @@
                                 <MudInputLabel ForId="prod_total">Total price</MudInputLabel>
                                 <MudInput id="prod_total" Variant="Variant.Outlined" InputType="InputType.Text" ReadOnly="true" Label="Total price" Value="@totalPrice"/>
                             </div>
+                            <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="UpdatePrice">Update</MudButton>
                         </MudStack>
                     </MudPaper>
                 </MudStack>
@@ -110,17 +114,44 @@
 
     protected override void OnParametersSet()
     {
-        Value = Product != null
-            ? new ProductCardMutable(Product)
-            : new ProductCardMutable() {Price = new PriceMutable()};
+        Prices ??= new List<Price>();
+        if (InEditing())
+        {
+            Prices.Add(Product.Price);
+            Value = new ProductCardMutable(Product);
+        }
+        else
+        {
+            Value = new ProductCardMutable() {Price = new PriceMutable()};
+        }
 
         Vendors ??= new List<Vendor>();
         Categories ??= new List<Category>();
         Errors ??= Array.Empty<string>();
     }
 
+    private void UpdatePrice()
+    {
+        SavedPrice = Value.Price;
+        Price newPrice = Price.Convert(SavedPrice);
+        if (Prices.LastOrDefault() == newPrice)
+            return;
+
+    // Добавление цены только в режиме редактирования
+        if (InEditing())
+            Prices.Add(newPrice);
+    }
+
+    private bool InEditing() =>
+        Product != null;
+
     private void Cancel() => MudDialog.Cancel();
 
-    private void Submit() => MudDialog.Close(ProductCard.Convert(Value));
+    private void Submit()
+    {
+        Value.Price = SavedPrice;
+        MudDialog.Close(ProductCard.Convert(Value));
+    }
 
+    private PriceMutable SavedPrice;
 }
