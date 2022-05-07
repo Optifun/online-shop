@@ -9,6 +9,18 @@ using OnlineShop.Client.Services.State;
 using System;
 using System.Net.Http;
 
+Uri GetUri(WebAssemblyHostBuilder webAssemblyHostBuilder)
+{
+    Uri uri = new(webAssemblyHostBuilder.HostEnvironment.BaseAddress);
+    if (!webAssemblyHostBuilder.HostEnvironment.IsDevelopment())
+        return uri;
+
+    string backend =
+        uri.Scheme + "://" +
+        uri.DnsSafeHost + ":7173/";
+    return new Uri(backend);
+}
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
@@ -26,11 +38,13 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
 });
 
-builder.Services.AddScoped(sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
+builder.Services.AddScoped(sp => new HttpClient {BaseAddress = GetUri(builder)});
 
-builder.Services.AddSingleton(sp => new HttpClient {BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)});
+builder.Services.AddSingleton(sp => new HttpClient {BaseAddress = GetUri(builder)});
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddSingleton<Navigation>();
 builder.Services.AddTransient<CookieStorage>();
+
+Console.WriteLine(GetUri(builder));
 
 await builder.Build().RunAsync();
