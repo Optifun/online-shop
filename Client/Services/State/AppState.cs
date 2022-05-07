@@ -26,7 +26,7 @@ namespace OnlineShop.Client.Services.State
             Vendor = new VendorState(client);
             Category = new CategoryState(client);
             Shop = new ShopState(client);
-            Product = new ProductState();
+            Product = new ProductState(client);
             Price = new PriceState();
         }
 

@@ -41,7 +41,7 @@ namespace OnlineShop.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(long id, ProductCard product)
+        public async Task<IActionResult> PutProduct(long id, [FromBody] ProductCard product)
         {
             if (id != product.Id)
                 return BadRequest();

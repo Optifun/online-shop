@@ -1,30 +1,61 @@
 ﻿using OnlineShop.Core.DTO;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace OnlineShop.Client.Services.State
 {
     public class ProductState
     {
-        string[] names = new[] {"Мышь Razer H", "Logitech H500", "Мышь Razer M", "Мышь Razer S", "Мышь Razer S+"};
-        double[] ratings = new[] {2, 4.5, 4.2, 4.5, 4.9};
-        float[] prices = new float[] {860, 2200, 2300, 2600, 3200};
-        string[] vendors = new[] {"Razer", "Logitech", "Razer", "Razer", "Razer"};
-        Category category = new Category(1, "Компьютерные мыши");
+        private readonly HttpClient _client;
+        private Lazy<List<ProductCard>> _cache;
 
-        public Task<List<ProductCard>> FetchCards()
+        public ProductState(HttpClient client)
         {
-            var products = Enumerable.Range(0, 5).Select(id =>
-                new ProductCard(id,
-                    names[id],
-                    "Some text",
-                    ratings[id],
-                    new Price(id, prices[id], 0),
-                    new Vendor(id, vendors[id]), category)
-            ).ToList();
-
-            return Task.FromResult(products);
+            _client = client;
+            _cache = new Lazy<List<ProductCard>>();
         }
+
+        public async Task<List<ProductCard>> FetchCards()
+        {
+            if (_cache.IsValueCreated)
+                return _cache.Value;
+
+            var products = await _client.GetFromJsonAsync<List<ProductCard>>("/api/product") ?? new List<ProductCard>();
+            _cache = new Lazy<List<ProductCard>>(products);
+            return products;
+        }
+
+        public async Task<ProductCard> FetchCard(long id)
+        {
+            var product = await _client.GetFromJsonAsync<ProductCard>($"/api/product/{id}");
+            return product;
+        }
+
+        public async Task<ProductCard?> UpdateProduct(long id, ProductCard product)
+        {
+            InvalidateCache();
+            var result = await _client.PutAsJsonAsync($"/api/product/{id}", product);
+            return await result.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<ProductCard>();
+        }
+
+        public async Task<ProductCard?> CreateProduct(ProductCard product)
+        {
+            InvalidateCache();
+            var result = await _client.PostAsJsonAsync($"/api/product", product);
+            return await result.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<ProductCard>();
+        }
+
+        public async Task<bool> DeleteProduct(long id)
+        {
+            InvalidateCache();
+            var result = await _client.DeleteAsync($"/api/product/{id}");
+            return result.IsSuccessStatusCode;
+        }
+
+        private void InvalidateCache() =>
+            _cache = new Lazy<List<ProductCard>>();
     }
 }

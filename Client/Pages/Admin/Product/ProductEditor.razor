@@ -100,6 +100,7 @@
     public string ActionText { get; set; }
 
     ProductCardMutable Value { get; set; }
+    private PriceMutable SavedPrice;
 
     double totalPrice => Value.Price.ApplyDiscount();
 
@@ -149,7 +150,4 @@
         Value.Price = SavedPrice;
         MudDialog.Close(ProductCard.Convert(Value));
     }
-
-    private PriceMutable SavedPrice;
-
 }
