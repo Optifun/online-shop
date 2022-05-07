@@ -1,21 +1,31 @@
 ﻿using OnlineShop.Core.DTO;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace OnlineShop.Client.Services.State
 {
     public class VendorState
     {
-        string[] vendors = new[] {"Razer", "Logitech", "Samsung", "Philips", "Sony"};
+        private readonly HttpClient _client;
+        private Lazy<List<Vendor>> _cache;
 
-        public Task<List<Vendor>> Fetch()
+        public VendorState(HttpClient client)
         {
-            var products = Enumerable.Range(0, 5).Select(id =>
-                new Vendor(id,
-                    vendors[id])).ToList();
-
-            return Task.FromResult(products);
+            _client = client;
+            _cache = new Lazy<List<Vendor>>();
+        }
+        
+        public async Task<List<Vendor>> Fetch()
+        {
+            if (_cache.IsValueCreated)
+                return _cache.Value;
+            
+            var vendors = await _client.GetFromJsonAsync<List<Vendor>>("/api/Vendor") ?? new List<Vendor>();
+            _cache = new Lazy<List<Vendor>>(vendors);
+            return vendors;
         }
     }
 }
