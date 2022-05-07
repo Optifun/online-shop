@@ -12,6 +12,19 @@ namespace OnlineShop.Core.DTO
     }
 
     public record ProductInfo(string Name, string Description, float Price, long VendorId, long CategoryId);
+    
+    public class ProductAmount
+    {
+        public ProductAmount(ProductCard product, Dictionary<Shop, long> amount)
+        {
+            Product = product;
+            Amount = amount;
+        }
+
+        public ProductCard Product { get; private set; }
+        public Dictionary<Shop, long> Amount { get; private set; }
+    }
+    
 
     public class ProductCardMutable
     {
