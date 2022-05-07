@@ -41,21 +41,10 @@
                         }
                         <MudPaper Elevation="3" Class="pa-4">
                             <MudText>Set/Update price</MudText>
-                            <MudStack Row="true" Class="align-center">
-                                <div>
-                                    <MudInputLabel ForId="prod_price">Price before discount</MudInputLabel>
-                                    <MudInput id="prod_price" Variant="Variant.Outlined" InputType="InputType.Text" Label="Price before discount" @bind-Value="@(Value.Price.Value)" For="@(() => Value.Price.Value)"/>
-                                </div>
-
-                                <div>
-                                    <MudInputLabel ForId="prod_discount">Discount</MudInputLabel>
-                                    <MudInput id="prod_discount" Variant="Variant.Outlined" InputType="InputType.Text" Label="Discount" @bind-Value="@(Value.Price.Discount)" For="@(() => Value.Price.Discount)"/>
-                                </div>
-
-                                <div>
-                                    <MudInputLabel ForId="prod_total">Total price</MudInputLabel>
-                                    <MudInput id="prod_total" Variant="Variant.Outlined" InputType="InputType.Text" ReadOnly="true" Label="Total price" Value="@totalPrice"/>
-                                </div>
+                            <MudStack Row="true" AlignItems="AlignItems.Baseline">
+                                <MudTextField Variant="Variant.Outlined" InputType="InputType.Text" Label="Price before discount" @bind-Value="@(Value.Price.Value)" For="@(() => Value.Price.Value)"/>
+                                <MudTextField Variant="Variant.Outlined" InputType="InputType.Text" Label="Discount" @bind-Value="@(Value.Price.Discount)" For="@(() => Value.Price.Discount)"/>
+                                <MudTextField Variant="Variant.Outlined" InputType="InputType.Text" ReadOnly="true" Label="Total price" Value="@totalPrice"/>
                                 <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="UpdatePrice">Update</MudButton>
                             </MudStack>
                         </MudPaper>
