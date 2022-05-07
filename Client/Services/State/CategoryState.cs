@@ -1,21 +1,32 @@
 ﻿using OnlineShop.Core.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace OnlineShop.Client.Services.State
 {
     public class CategoryState
     {
-        string[] category = new[] {"Телевизоры", "Компьютерные мыши", "Мониторы", "Видеопроигрыватели"};
+        private readonly HttpClient _client;
+        private Lazy<List<Category>> _cache;
 
-        public Task<List<Category>> Fetch()
+        public CategoryState(HttpClient client)
         {
-            var categories = Enumerable.Range(0, 4).Select(id =>
-                new Category(id,
-                    category[id])).ToList();
+            _client = client;
+            _cache = new Lazy<List<Category>>();
+        }
+
+        public async Task<List<Category>> Fetch()
+        {
+            if (_cache.IsValueCreated)
+                return _cache.Value;
             
-            return Task.FromResult(categories);
+            var categories = await _client.GetFromJsonAsync<List<Category>>("/api/Category") ?? new List<Category>();
+            _cache = new Lazy<List<Category>>(categories);
+            return categories;
         }
     }
 }

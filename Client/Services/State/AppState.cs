@@ -23,11 +23,11 @@ namespace OnlineShop.Client.Services.State
         public AppState(HttpClient client)
         {
             _client = client;
-            Product = new ProductState();
             Vendor = new VendorState(client);
-            Category = new CategoryState();
-            Price = new PriceState();
+            Category = new CategoryState(client);
             Shop = new ShopState(client);
+            Product = new ProductState();
+            Price = new PriceState();
         }
 
         public void SetUserState(UserState state)
