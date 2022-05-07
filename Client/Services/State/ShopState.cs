@@ -1,4 +1,5 @@
 ﻿using OnlineShop.Core.DTO;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -10,15 +11,22 @@ namespace OnlineShop.Client.Services.State
     {
         private readonly HttpClient _client;
 
+        private Lazy<List<Shop>> _cache;
+
         public ShopState(HttpClient client)
         {
             _client = client;
+            _cache = new Lazy<List<Shop>>();
         }
 
         public async Task<List<Shop>> Fetch()
         {
-            var shops = await _client.GetFromJsonAsync<List<Shop>>("/api/shop");
-            return shops ?? new List<Shop>();
+            if (_cache.IsValueCreated)
+                return _cache.Value;
+            
+            var shops = await _client.GetFromJsonAsync<List<Shop>>("/api/shop") ?? new List<Shop>();
+            _cache = new Lazy<List<Shop>>(shops);
+            return shops;
         }
     }
 }
