@@ -1,0 +1,33 @@
+﻿@using OnlineShop.Core.DTO
+
+<MudPaper Class="pa-2" Elevation="2">
+    @ShopInventory.Shop.Address
+    <MudStack Row="true">
+        <MudIconButton Icon="@Icons.Material.Outlined.Remove" Color="Color.Inherit" OnClick="@((ev) => UpdateNum(ev, -1))"/>
+        <MudTextField InputType="InputType.Number" ValueChanged="SetNum"></MudTextField>
+        <MudIconButton Icon="@Icons.Material.Outlined.Add" OnClick="@((ev) => UpdateNum(ev, +1))"/>
+    </MudStack>
+</MudPaper>
+
+@code {
+
+    [Parameter]
+    public ShopInventory ShopInventory { get; set; }
+
+    [Parameter]
+    public EventCallback<ShopInventory> Updated { get; set; }
+
+    private async Task SetNum(ChangeEventArgs obj)
+    {
+        long value = (long) (obj.Value ?? ShopInventory.Amount);
+        ShopInventory.Amount = value;
+        await Updated.InvokeAsync(ShopInventory);
+    }
+
+    private async Task UpdateNum(MouseEventArgs mouseEventArgs, int i)
+    {
+        ShopInventory.Amount += i;
+        await Updated.InvokeAsync(ShopInventory);
+    }
+
+}

@@ -1,0 +1,65 @@
+﻿@using OnlineShop.Core.DTO
+<MudPaper Class="pa-2" Elevation="1">
+    <MudStack AlignItems="AlignItems.Stretch" Style="min-width: 180px">
+        <h3>Shops</h3>
+        <MudPaper Class="pa-2" Elevation="2">
+            <MudText>Set product ammout</MudText>
+            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Baseline">
+                <MudSelect T="Shop" @bind-Value="selectedShop" Dense="true">
+                    @foreach (var shop in availableShops)
+                    {
+                        <MudSelectItem Value="shop">@shop.Address</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField InputType="InputType.Number" @bind-Value="selectedCount"/>
+                <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="AddShopAmount">Add</MudButton>
+            </MudStack>
+        </MudPaper>
+
+        @foreach (var (shop, count) in ProductAmount.Amount)
+        {
+            <ShopAmount Updated="onAmountUpdated" ShopInventory="new ShopInventory() {Shop = shop, Amount = count}"/>
+        }
+    </MudStack>
+</MudPaper>
+
+@code {
+
+    [Parameter]
+    public List<Shop>? Shops { get; set; }
+
+    [Parameter]
+    public ProductAmount? ProductAmount { get; set; }
+
+    [Parameter]
+    public EventCallback<ProductAmount> AmountUpdated { get; set; }
+
+    List<Shop> availableShops;
+    private Shop selectedShop;
+    private long selectedCount = 1;
+
+    protected override void OnParametersSet()
+    {
+        if (Shops == null) throw new ArgumentException(nameof(Shops));
+        if (ProductAmount == null) throw new ArgumentException(nameof(ProductAmount));
+
+        selectedShop = Shops.FirstOrDefault();
+        availableShops = Shops.Except(ProductAmount.Amount.Keys.ToList()).ToList();
+    }
+
+
+    private async Task onAmountUpdated(ShopInventory inventory)
+    {
+        var (shop, count) = inventory;
+        ProductAmount.Amount[shop] = count;
+        AmountUpdated.InvokeAsync(ProductAmount);
+    }
+
+
+    private async Task AddShopAmount()
+    {
+        ProductAmount.Amount[selectedShop] = selectedCount;
+        AmountUpdated.InvokeAsync(ProductAmount);
+    }
+
+}

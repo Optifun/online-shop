@@ -4,73 +4,76 @@
 
 <MudDialog>
     <DialogContent>
-        <MudForm Model="@Value" @bind-Errors="@Errors" @bind-IsValid="IsValid">
-            <MudStack Row="true">
-                <MudPaper Class="pa-4 ma-4" Elevation="3">
-                    <MudText>Edit product</MudText>
-                    <MudField Label="Id">@(Value.Id ?? 0)</MudField>
-                    <MudTextField @bind-Value="Value.Name" Label="Name" For="@(() => Value.Name)" Required="true"></MudTextField>
-                    <MudTextField @bind-Value="Value.Description" Label="Description" For="@(() => Value.Description)" Required="true"></MudTextField>
+        <MudStack Row="true">
+            <MudForm Model="@Value" @bind-Errors="@Errors" @bind-IsValid="IsValid">
+                <MudStack Row="true">
+                    <MudPaper Class="pa-4 ma-4" Elevation="3">
+                        <MudText>Edit product</MudText>
+                        <MudField Label="Id">@(Value.Id ?? 0)</MudField>
+                        <MudTextField @bind-Value="Value.Name" Label="Name" For="@(() => Value.Name)" Required="true"></MudTextField>
+                        <MudTextField @bind-Value="Value.Description" Label="Description" For="@(() => Value.Description)" Required="true"></MudTextField>
 
-                    <MudSelect T="Vendor" Label="Vendor" For="@(() => Value.Vendor)" Required="true" @bind-Value="@Value.Vendor">
-                        @foreach (var v in Vendors)
-                        {
-                            <MudSelectItem Value="v">@v.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-
-                    <MudSelect T="Category" Label="Category" For="@(() => Value.Category)" Required="true" @bind-Value="@Value.Category">
-                        @foreach (var c in Categories)
-                        {
-                            <MudSelectItem Value="c">@c.Type</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudPaper>
-
-                <MudStack Justify="Justify.SpaceBetween" Class="d-flex flex-column pa-4">
-                    @if (Prices != null || Prices.Count == 0)
-                    {
-                        <MudPaper Elevation="3" Class="pa-4">
-                            <MudText>Previous prices</MudText>
-                            @foreach (var price in Prices)
+                        <MudSelect T="Vendor" Label="Vendor" For="@(() => Value.Vendor)" Required="true" @bind-Value="@Value.Vendor">
+                            @foreach (var v in Vendors)
                             {
-                                <PricePlain Price="price"/>
+                                <MudSelectItem Value="v">@v.Name</MudSelectItem>
                             }
-                        </MudPaper>
-                    }
-                    <MudPaper Elevation="3" Class="pa-4">
-                        <MudText>Set/Update price</MudText>
-                        <MudStack Row="true"  Class="align-center">
-                            <div>
-                                <MudInputLabel ForId="prod_price">Price before discount</MudInputLabel>
-                                <MudInput id="prod_price" Variant="Variant.Outlined" InputType="InputType.Text" Label="Price before discount" @bind-Value="@(Value.Price.Value)" For="@(() => Value.Price.Value)"/>
-                            </div>
+                        </MudSelect>
 
-                            <div>
-                                <MudInputLabel ForId="prod_discount">Discount</MudInputLabel>
-                                <MudInput id="prod_discount" Variant="Variant.Outlined" InputType="InputType.Text" Label="Discount" @bind-Value="@(Value.Price.Discount)" For="@(() => Value.Price.Discount)"/>
-                            </div>
-
-                            <div>
-                                <MudInputLabel ForId="prod_total">Total price</MudInputLabel>
-                                <MudInput id="prod_total" Variant="Variant.Outlined" InputType="InputType.Text" ReadOnly="true" Label="Total price" Value="@totalPrice"/>
-                            </div>
-                            <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="UpdatePrice">Update</MudButton>
-                        </MudStack>
+                        <MudSelect T="Category" Label="Category" For="@(() => Value.Category)" Required="true" @bind-Value="@Value.Category">
+                            @foreach (var c in Categories)
+                            {
+                                <MudSelectItem Value="c">@c.Type</MudSelectItem>
+                            }
+                        </MudSelect>
                     </MudPaper>
-                </MudStack>
-            </MudStack>
 
-            @if (!IsValid)
-            {
-                <MudPaper Class="pa-2 mx-4">
-                    @foreach (var error in Errors)
-                    {
-                        <MudText Color="@Color.Error" Class="mx-2">@error</MudText>
-                    }
-                </MudPaper>
-            }
-        </MudForm>
+                    <MudStack Justify="Justify.SpaceBetween" Class="d-flex flex-column pa-4">
+                        @if (Prices != null || Prices.Count == 0)
+                        {
+                            <MudPaper Elevation="3" Class="pa-4">
+                                <MudText>Previous prices</MudText>
+                                @foreach (var price in Prices)
+                                {
+                                    <PricePlain Price="price"/>
+                                }
+                            </MudPaper>
+                        }
+                        <MudPaper Elevation="3" Class="pa-4">
+                            <MudText>Set/Update price</MudText>
+                            <MudStack Row="true" Class="align-center">
+                                <div>
+                                    <MudInputLabel ForId="prod_price">Price before discount</MudInputLabel>
+                                    <MudInput id="prod_price" Variant="Variant.Outlined" InputType="InputType.Text" Label="Price before discount" @bind-Value="@(Value.Price.Value)" For="@(() => Value.Price.Value)"/>
+                                </div>
+
+                                <div>
+                                    <MudInputLabel ForId="prod_discount">Discount</MudInputLabel>
+                                    <MudInput id="prod_discount" Variant="Variant.Outlined" InputType="InputType.Text" Label="Discount" @bind-Value="@(Value.Price.Discount)" For="@(() => Value.Price.Discount)"/>
+                                </div>
+
+                                <div>
+                                    <MudInputLabel ForId="prod_total">Total price</MudInputLabel>
+                                    <MudInput id="prod_total" Variant="Variant.Outlined" InputType="InputType.Text" ReadOnly="true" Label="Total price" Value="@totalPrice"/>
+                                </div>
+                                <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="UpdatePrice">Update</MudButton>
+                            </MudStack>
+                        </MudPaper>
+                    </MudStack>
+                </MudStack>
+
+            </MudForm>
+            <ProductInventory Shops="Shops" ProductAmount="ProductAmount"/>
+        </MudStack>
+        @if (!IsValid)
+        {
+            <MudPaper Class="pa-2 mx-4">
+                @foreach (var error in Errors)
+                {
+                    <MudText Color="@Color.Error" Class="mx-2">@error</MudText>
+                }
+            </MudPaper>
+        }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -99,6 +102,12 @@
     public List<Price>? Prices { get; set; }
 
     [Parameter]
+    public List<Shop> Shops { get; set; }
+
+    [Parameter]
+    public ProductAmount? ProductAmount { get; set; }
+
+    [Parameter]
     public string ActionText { get; set; }
 
     ProductCardMutable Value { get; set; }
@@ -108,12 +117,12 @@
     private bool IsValid { get; set; }
     private string[]? Errors { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-    }
-
     protected override void OnParametersSet()
     {
+        if (Shops == null) throw new ArgumentException(nameof(Shops));
+        if (Vendors == null) throw new ArgumentException(nameof(Vendors));
+        if (Categories == null) throw new ArgumentException(nameof(Categories));
+
         Prices ??= new List<Price>();
         if (InEditing())
         {
@@ -125,9 +134,8 @@
             Value = new ProductCardMutable() {Price = new PriceMutable()};
         }
 
-        Vendors ??= new List<Vendor>();
-        Categories ??= new List<Category>();
         Errors ??= Array.Empty<string>();
+        ProductAmount ??= new ProductAmount(Product, new Dictionary<Shop, long>());
     }
 
     private void UpdatePrice()
@@ -154,4 +162,5 @@
     }
 
     private PriceMutable SavedPrice;
+
 }

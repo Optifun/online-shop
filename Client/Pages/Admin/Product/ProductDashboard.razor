@@ -150,7 +150,8 @@
     {
         List<Vendor> vendors = await AppState.Vendor.Fetch();
         List<Category> categories = await AppState.Category.Fetch();
-        var parameters = new DialogParameters {["Vendors"] = vendors, ["Categories"] = categories};
+        List<Shop> shops = await AppState.Shop.Fetch();
+        var parameters = new DialogParameters {["Vendors"] = vendors, ["Categories"] = categories, ["Shops"] = shops};
         return parameters;
     }
 
