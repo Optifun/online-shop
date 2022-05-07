@@ -128,7 +128,7 @@
         var productCard = obj as ProductCard;
         Console.WriteLine(obj);
 
-        _readOnly = productCard == null && productCard != _selectedProduct;
+        _readOnly = productCard == null || productCard == _selectedProduct;
         _selectedProduct = _readOnly ? null : productCard;
     }
 
@@ -143,7 +143,7 @@
     private void Drop()
     {
         _selectedProduct = null;
-        _readOnly = false;
+        _readOnly = true;
     }
 
     async Task<DialogParameters> InitParameters()
