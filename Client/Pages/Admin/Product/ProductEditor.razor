@@ -42,8 +42,8 @@
                         <MudPaper Elevation="3" Class="pa-4">
                             <MudText>Set/Update price</MudText>
                             <MudStack Row="true" AlignItems="AlignItems.Baseline">
-                                <MudTextField Variant="Variant.Outlined" InputType="InputType.Text" Label="Price before discount" @bind-Value="@(Value.Price.Value)" For="@(() => Value.Price.Value)"/>
-                                <MudTextField Variant="Variant.Outlined" InputType="InputType.Text" Label="Discount" @bind-Value="@(Value.Price.Discount)" For="@(() => Value.Price.Discount)"/>
+                                <MudTextField Variant="Variant.Outlined" InputType="InputType.Text" Label="Price before discount" @bind-Value="@(SavedPrice.Value)" For="@(() => Value.Price.Value)"/>
+                                <MudTextField Variant="Variant.Outlined" InputType="InputType.Text" Label="Discount" @bind-Value="@(SavedPrice.Discount)" For="@(() => Value.Price.Discount)"/>
                                 <MudTextField Variant="Variant.Outlined" InputType="InputType.Text" ReadOnly="true" Label="Total price" Value="@totalPrice"/>
                                 <MudButton Color="Color.Success" Variant="Variant.Outlined" OnClick="UpdatePrice">Update</MudButton>
                             </MudStack>
@@ -126,11 +126,11 @@
 
         Errors ??= Array.Empty<string>();
         ProductAmount ??= new ProductAmount(Product, new Dictionary<Shop, long>());
+        SavedPrice = Value.Price;
     }
 
     private void UpdatePrice()
     {
-        SavedPrice = Value.Price;
         Price newPrice = Price.Convert(SavedPrice);
         if (Prices.LastOrDefault() == newPrice)
             return;
@@ -147,7 +147,18 @@
 
     private void Submit()
     {
-        Value.Price = SavedPrice;
-        MudDialog.Close(ProductCard.Convert(Value));
+        try
+        {
+            Value.Price = SavedPrice;
+            ProductCard productCard = ProductCard.Convert(Value);
+            Console.WriteLine(Value);
+            Console.WriteLine(productCard);
+            MudDialog.Close(productCard);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
+
 }

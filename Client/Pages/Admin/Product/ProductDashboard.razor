@@ -166,11 +166,24 @@
         if (!result.Cancelled)
         {
             var productCard = result.Data as ProductCard;
+            if (productCard == null)
+                return;
+
+            ProductCard? newProduct;
             Console.WriteLine(productCard);
-            if (productCard != null)
-                Products.Add(productCard);
+            try
+            {
+                newProduct = await AppState.Product.CreateProduct(productCard);
+                Products.Add(newProduct);
+                _snackbar.Add("New product created", Severity.Success);
+            }
+            catch (Exception e)
+            {
+                _snackbar.Add("Could not create product <br>" + e.Message, Severity.Error);
+                Console.WriteLine(e);
+            }
         }
-        await UpdateTable();
+    // await UpdateTable();
     }
 
     private async Task Edit()
@@ -191,7 +204,7 @@
             if (_selectedProduct != null && productCard != null)
                 Products.Replace(_selectedProduct, productCard);
         }
-        
+
         await UpdateTable();
     }
 
