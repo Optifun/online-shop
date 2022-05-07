@@ -44,7 +44,10 @@ namespace OnlineShop.Client.Services.State
         public async Task<ProductCard?> CreateProduct(ProductCard product)
         {
             InvalidateCache();
-            var result = await _client.PostAsJsonAsync($"/api/product", product);
+            (long _, var name, var description, double _, var price, var vendor, var category) = product;
+
+            ProductInfo productInfo = new ProductInfo(name, description, price, vendor.Id, category.Id);
+            var result = await _client.PostAsJsonAsync($"/api/product", productInfo);
             return await result.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<ProductCard>();
         }
 
