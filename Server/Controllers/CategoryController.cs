@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace OnlineShop.Server.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryRepository _categoryRepository;
