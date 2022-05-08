@@ -1,6 +1,7 @@
 ﻿@using OnlineShop.Core.DTO
 @using OnlineShop.Client.Services.State
 @using OnlineShop.Client.Components
+@inject ISnackbar _snackbar
 
 <MudDialog>
     <DialogContent>
@@ -129,15 +130,23 @@
         SavedPrice = Value.Price;
     }
 
-    private void UpdatePrice()
+    private async Task UpdatePrice()
     {
         Price newPrice = Price.Convert(SavedPrice);
         if (Prices.LastOrDefault() == newPrice)
             return;
 
     // Добавление цены только в режиме редактирования
-        if (InEditing())
+        if (!InEditing()) return;
+
+        bool succeed = await AppState.Price.SetPrice(Product.Id, newPrice);
+        if (succeed)
+        {
             Prices.Add(newPrice);
+            _snackbar.Add("The price was updated", Severity.Success);
+        }
+        else
+            _snackbar.Add("Could not update the price", Severity.Error);
     }
 
     private bool InEditing() =>
