@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Core.DTO;
 using OnlineShop.Server.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 
@@ -12,10 +13,22 @@ namespace OnlineShop.Server.Controllers
     public class PriceController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
+        private readonly IPriceRepository _priceRepository;
 
-        public PriceController(IProductRepository productRepository)
+        public PriceController(IProductRepository productRepository, IPriceRepository priceRepository)
         {
             _productRepository = productRepository;
+            _priceRepository = priceRepository;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IEnumerable<Price>>> Get(long id)
+        {
+            var prices = await _priceRepository.GetByProductId(id);
+            if (prices.Count > 0)
+                return Ok(prices);
+            else
+                return NotFound("Product does not exist");
         }
 
         [HttpPut("{id}")]
