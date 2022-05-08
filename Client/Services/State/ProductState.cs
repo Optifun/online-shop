@@ -34,11 +34,11 @@ namespace OnlineShop.Client.Services.State
             return product;
         }
 
-        public async Task<ProductCard?> UpdateProduct(long id, ProductCard product)
+        public async Task<bool> UpdateProduct(long id, ProductCard product)
         {
             InvalidateCache();
             var result = await _client.PutAsJsonAsync($"/api/product/{id}", product);
-            return await result.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<ProductCard>();
+            return result.IsSuccessStatusCode;
         }
 
         public async Task<ProductCard?> CreateProduct(ProductCard product)

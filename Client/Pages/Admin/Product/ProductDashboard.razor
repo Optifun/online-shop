@@ -174,16 +174,16 @@
             try
             {
                 newProduct = await AppState.Product.CreateProduct(productCard);
-                Products.Add(newProduct);
-                _snackbar.Add("New product created", Severity.Success);
+    // Products.Add(newProduct);
+                _snackbar.Add("A new product was created", Severity.Success);
             }
             catch (Exception e)
             {
-                _snackbar.Add("Could not create product <br>" + e.Message, Severity.Error);
+                _snackbar.Add("Could not create a product <br>" + e.Message, Severity.Error);
                 Console.WriteLine(e);
             }
         }
-    // await UpdateTable();
+        await UpdateTable();
     }
 
     private async Task Edit()
@@ -195,14 +195,21 @@
         parameters.Add("Prices", prices);
 
         var dialog = _dialogService.Show<ProductEditor>("Редактирование", parameters, DialogOptions);
-        var result = await dialog.Result;
+        var dialogResult = await dialog.Result;
 
-        if (!result.Cancelled)
+        if (dialogResult.Cancelled)
+            return;
+        
+        var productCard = dialogResult.Data as ProductCard;
+        Console.WriteLine(productCard);
+        
+        if (_selectedProduct != null && productCard != null)
         {
-            var productCard = result.Data as ProductCard;
-            Console.WriteLine(productCard);
-            if (_selectedProduct != null && productCard != null)
-                Products.Replace(_selectedProduct, productCard);
+            var succeed = await AppState.Product.UpdateProduct(_selectedProduct.Id, productCard);
+            if (succeed)
+                _snackbar.Add("The product was updated", Severity.Success);
+            else
+                _snackbar.Add("Could not update the product", Severity.Error);
         }
 
         await UpdateTable();
@@ -220,9 +227,9 @@
 
         var result = await AppState.Product.DeleteProduct(_selectedProduct.Id);
         if (result)
-            _snackbar.Add("Project is deleted");
+            _snackbar.Add("The project is deleted");
         else
-            _snackbar.Add("Project could not be deleted", Severity.Error);
+            _snackbar.Add("The project could not be deleted", Severity.Error);
 
         await UpdateTable();
     }
