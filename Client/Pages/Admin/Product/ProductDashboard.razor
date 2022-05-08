@@ -65,7 +65,7 @@
         <RowTemplate>
             <MudTd DataLabel="Id">@context.Id</MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
-            <MudTd DataLabel="Price">@FormatPrice(context.Price) ₽</MudTd>
+            <MudTd DataLabel="Price">@FormatPrice(context.Price)</MudTd>
             <MudTd DataLabel="Vendor">@context.Vendor.Name</MudTd>
             <MudTd DataLabel="Category">@context.Category.Type</MudTd>
             <MudTd DataLabel="Rating">@context.Rating</MudTd>
@@ -99,15 +99,11 @@
 
     private string FormatPrice(Price price)
     {
-        float priceValue = price.Discount == 0 ? price.Value : price.Value * price.Discount;
-        var priceStr = priceValue.ToString(CultureInfo.CurrentCulture);
-
-        double discount = Math.Round(price.Discount * 100, MidpointRounding.ToZero);
-        string discountStr = discount.ToString(CultureInfo.CurrentCulture);
-
+        var priceStr = price.ApplyDiscount().ToString(CultureInfo.CurrentCulture);
+        
         return price.Discount == 0 ?
             priceStr :
-            priceStr + $"(-{discountStr})";
+            priceStr + $"₽ (-{price.Discount:F0}%)";
     }
 
     private bool FilterFunc(ProductCard card)
@@ -199,10 +195,10 @@
 
         if (dialogResult.Cancelled)
             return;
-        
+
         var productCard = dialogResult.Data as ProductCard;
         Console.WriteLine(productCard);
-        
+
         if (_selectedProduct != null && productCard != null)
         {
             var succeed = await AppState.Product.UpdateProduct(_selectedProduct.Id, productCard);

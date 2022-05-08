@@ -3,7 +3,7 @@
 @if (Price.Discount > 0)
 {
     <MudText>
-        @totalPrice <s>@oldPrice</s> (<MudText Inline="true" Color="Color.Error">-@discount</MudText>)
+        @totalPrice <s>@oldPrice</s> (<MudText Inline="true" Color="Color.Error">-@discount%</MudText>)
     </MudText>
 }
 else
@@ -24,7 +24,7 @@ else
     {
         totalPrice = Price.ApplyDiscount().ToString("N2");
         oldPrice = Price.Value.ToString("N2");
-        discount = Price.Discount.ToString("P");
+        discount = Price.Discount.ToString();
     }
 
 }
