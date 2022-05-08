@@ -18,9 +18,9 @@
 
         <MudButton OnClick="Auth">
             <MudAvatar Color="Color.Info" Variant="Variant.Text">
-                @if (Letter != ' ')
+                @if (GetLetter() != ' ')
                 {
-                    <span>@Letter</span>
+                    <span>@GetLetter()</span>
                 }
                 else
                 {
@@ -54,13 +54,12 @@
     public AppState AppState { get; set; }
 
     bool navMenuOpen = false;
-    private char Letter;
     private bool _logoutOpen;
 
-    protected override void OnParametersSet()
+    private char GetLetter()
     {
         string userName = AppState.CurrentUser?.UserName ?? "";
-        Letter = userName != "" ? userName.Substring(0, 1).ToUpper()[0] : ' ';
+        return userName != "" ? userName.Substring(0, 1).ToUpper()[0] : ' ';
     }
 
     void DrawerToggle()
