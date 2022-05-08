@@ -1,4 +1,7 @@
 ﻿@using MudBlazor
+@using OnlineShop.Client.Components.Auth
+@using OnlineShop.Client.Services.State
+@inject IDialogService _dialogService
 
 <MudDrawer Variant="@DrawerVariant.Temporary" Open="Open" DisableOverlay="true" PreserveOpenState="true">
 
@@ -17,11 +20,21 @@
             <MudNavLink Href="/profile" Icon="@Icons.Filled.Person">
                 Личный кабинет
             </MudNavLink>
-            <MudNavGroup Title="Админ-панель" Icon="@Icons.Filled.Tab">
-                <MudNavLink Match="NavLinkMatch.All" Href="/admin">Главная</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Href="/admin/users">Пользователи</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Href="/admin/products">Товары</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Href="/admin/reports">Отчеты</MudNavLink>
+            <MudNavGroup Title="Админ-панель" Icon="@Icons.Filled.Tab" @bind-Expanded="AdminExpanded">
+                @if (IsAdmin())
+                {
+                    <MudNavLink Match="NavLinkMatch.All" Href="/admin">Главная</MudNavLink>
+                    <MudNavLink Match="NavLinkMatch.All" Href="/admin/users">Пользователи</MudNavLink>
+                    <MudNavLink Match="NavLinkMatch.All" Href="/admin/products">Товары</MudNavLink>
+                    <MudNavLink Match="NavLinkMatch.All" Href="/admin/reports">Отчеты</MudNavLink>
+                }
+                else
+                {
+                    <MudNavLink Match="NavLinkMatch.All" OnClick="ShowAuth">Главная</MudNavLink>
+                    <MudNavLink Match="NavLinkMatch.All" OnClick="ShowAuth">Пользователи</MudNavLink>
+                    <MudNavLink Match="NavLinkMatch.All" OnClick="ShowAuth">Товары</MudNavLink>
+                    <MudNavLink Match="NavLinkMatch.All" OnClick="ShowAuth">Отчеты</MudNavLink>
+                }
             </MudNavGroup>
         </MudNavMenu>
     </MudDrawerContainer>
@@ -29,15 +42,33 @@
 
 @code {
 
-    [Parameter]
-    public bool Open { get; set; } = false;
+    [CascadingParameter]
+    AppState AppState { get; set; }
 
     [Parameter]
+    public bool Open { get; set; } = false;
+    [Parameter]
     public EventCallback ClickedClose { get; set; }
+
+    bool AdminExpanded = false;
+
+    protected override void OnParametersSet()
+    {
+        AdminExpanded = IsAdmin();
+    }
+
 
     private void onClicked()
     {
         ClickedClose.InvokeAsync();
     }
+
+    private void ShowAuth()
+    {
+        _dialogService.Show<AuthDialog>();
+    }
+
+    private bool IsAdmin() => 
+        AppState.CurrentUser?.Admin ?? false;
 
 }

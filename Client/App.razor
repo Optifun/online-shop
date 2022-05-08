@@ -57,7 +57,7 @@
 
     private async Task OnNavigateAsync(NavigationContext context)
     {
-        if (context.Path.Contains("/admin/"))
+        if (context.Path.Contains("admin"))
         {
             if (_appState.CurrentUser == null)
             {
@@ -65,7 +65,7 @@
                 _dialogService.Show<AuthDialog>();
                 return;
             }
-
+            
             if (_appState.CurrentUser.Admin)
                 return;
 
@@ -79,7 +79,8 @@
         if (_navigationManager.CanNavigateBack)
             _navigationManager.NavigateBack();
         else
-            _navigationManager.NavigateTo("/main");
+            _navigationManager.NavigateTo("/");
+            
     }
 
 }
