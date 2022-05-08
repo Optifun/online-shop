@@ -1,20 +1,31 @@
 ﻿@using OnlineShop.Core.DTO
 
-<MudCard @key="@Product.Id" Elevation="2" Outlined="true">
+<MudCard @key="@Product.Id" Elevation="2" Outlined="true" Style="min-width: 340px;">
     <MudCardHeader>
-        @Product.Name
+        <MudText Typo="Typo.h6">
+            @Product.Name
+        </MudText>
+        <MudSpacer/>
+        <MudChip Variant="Variant.Text" Label="true" Color="Color.Success">@Product.Category.Type</MudChip>
+
     </MudCardHeader>
-    <MudCardContent>
-        @Product.Description
-        <div>
-            <MudChip Variant="Variant.Text" Label="true" Color="Color.Info">@Product.Vendor.Name</MudChip>
-        </div>
+    <MudCardContent Style="min-height: 140px">
+        <MudText Typo="Typo.subtitle1">
+            @Product.Description
+        </MudText>
+        <MudLink>@Product.Vendor.Name</MudLink>
     </MudCardContent>
     <MudCardActions>
-        <MudRating ReadOnly="@ReadOnly" SelectedValue="@Stars" Size="Size.Small"></MudRating>
-        <MudSpacer></MudSpacer>
-        <MudButton StartIcon="@Icons.Material.Filled.AddShoppingCart" Variant="Variant.Outlined" Color="Color.Secondary">Buy</MudButton>
-
+        <MudStack Row="true" AlignItems="AlignItems.End" Justify="Justify.SpaceBetween" Style="width: 100%">
+            <MudRating ReadOnly="@ReadOnly" SelectedValue="@Stars" Size="Size.Small"/>
+            <MudStack Spacing="0" AlignItems="AlignItems.Center">
+                @if (Product.Price.Discount > 0)
+                {
+                    <MudText GutterBottom="false">-@Product.Price.Discount% <s>@Product.Price.Value</s></MudText>
+                }
+                <MudButton StartIcon="@Icons.Material.Filled.AddShoppingCart" Variant="Variant.Outlined" Color="Color.Secondary">@Product.Price.ApplyDiscount()</MudButton>
+            </MudStack>
+        </MudStack>
     </MudCardActions>
 </MudCard>
 
@@ -33,4 +44,5 @@
         Stars = (int) (Product.Rating * 10) / 2;
         Console.WriteLine(Stars);
     }
+
 }

@@ -1,22 +1,26 @@
 ﻿@using OnlineShop.Core.DTO
 
-<MudContainer Class="d-flex flex-wrap gap-4" MaxWidth="MaxWidth.Large">
-    @if (Products == null)
-    {
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="200px" Height="200px" />
-    }
-    else
-    {
-        @foreach (var product in Products)
+<MudContainer Class="d-flex flex-wrap py-8" MaxWidth="MaxWidth.Large">
+    <MudGrid>
+        @if (Products == null)
         {
-            <ProductCardView ReadOnly="@ReadOnly" Product=@product/>
+            for (int i = 0; i < 6; i++)
+            {
+                <MudItem xs="4">
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="400px" Height="290px"/>
+                </MudItem>
+            }
         }
-    }
+        else
+        {
+            @foreach (var product in Products)
+            {
+                <MudItem xs="4">
+                    <ProductCardView ReadOnly="@ReadOnly" Product="@product"/>
+                </MudItem>
+            }
+        }
+    </MudGrid>
 </MudContainer>
 
 @code {
