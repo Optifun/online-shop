@@ -36,7 +36,7 @@ namespace OnlineShop.Server.Services
             return product?.Adapt<Product>();
         }
 
-        public async Task<List<Product>> GetAll() => 
+        public async Task<List<Product>> GetAll() =>
             await _context.Products.ProjectToType<Product>().ToListAsync();
 
         public async Task<Product?> Update(Product product)
@@ -84,6 +84,19 @@ namespace OnlineShop.Server.Services
                 return false;
 
             await RemoveProduct(product);
+            return true;
+        }
+
+        public async Task<bool> SetPrice(long id, Price price)
+        {
+            DataAccess.Product? product = _context.Products.FirstOrDefault(p => p.Id == id);
+            if (product == null) return false;
+
+            var newPrice = await CreatePrice(price.Value, price.Discount);
+            newPrice.ProductId = product.Id;
+            product.Price = newPrice;
+            
+            await _context.SaveChangesAsync();
             return true;
         }
 

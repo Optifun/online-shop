@@ -2,6 +2,7 @@
 using OnlineShop.Core.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Price = OnlineShop.Core.Model.Price;
 using Product = OnlineShop.Core.Model.Product;
 
 namespace OnlineShop.Server.Services
@@ -14,5 +15,6 @@ namespace OnlineShop.Server.Services
         Task<Product> Create(ProductInfo product);
         Task Delete(Product product);
         Task<bool> Delete(long id);
+        Task<bool> SetPrice(long id, Price price);
     }
 }
