@@ -1,15 +1,10 @@
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using OnlineShop.Server;
 using OnlineShop.Server.DataAccess;
 using OnlineShop.Server.Services;
-using System.Collections.Generic;
 using System.Text;
 
 const string debugBlazorApp = "_debugBlazorApp";
@@ -120,6 +115,9 @@ if (migrateDb)
         {
             bool created = context.Database.EnsureCreated();
             Console.WriteLine($"DB bootstrapped={created}");
+            if (created)
+                SeedDataService.PopulateData(context);
+
         }
         catch (Exception e)
         {
