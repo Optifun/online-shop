@@ -106,4 +106,28 @@ app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+bool migrateDb = builder.Configuration.GetValue<bool>("MigrateDB");
+if (migrateDb)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<OnlineShopContext>();
+        if (!context.Database.CanConnect())
+            Console.WriteLine("Can't connect to DB");
+
+        try
+        {
+            bool created = context.Database.EnsureCreated();
+            Console.WriteLine($"DB bootstrapped={created}");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Migration error");
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+}
+
 app.Run();
